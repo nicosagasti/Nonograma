@@ -25,6 +25,7 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
+    // Recibe la instancia de Prolog y utiliza la consulta init(RowsClues, ColsClues, Grid) para obtener las pistas de filas y columnas del tablero del juego
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
@@ -33,7 +34,6 @@ function Game() {
       }
     });
   }
-
 
  /* function checkCluesAfterMove(grid, rowsClues, colsClues, i, j) {
     // 1. Extract relevant row and column segments:
