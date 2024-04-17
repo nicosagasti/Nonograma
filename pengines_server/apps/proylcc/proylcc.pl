@@ -23,14 +23,14 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
- put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
 	put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, RowSat, ColSat), % averiguamos los valores del RowSat y ColSat
-	 (
-        % Si ambos RowSat y ColSat son cero, llamar a put/8 nuevamente
-        RowSat == 0, ColSat == 0 ->
-            put(Content, [RowN, ColN], RowsClues, ColsClues, TempGrid, NewGrid, 0, 0)
-		; % futuro else
-	 ).
+    put(Content, [RowN, ColN], RowsClues, ColsClues, TempGrid, NewGrid, 0, 0).
+    %  (
+    %     % Si ambos RowSat y ColSat son cero, llamar a put/8 nuevamente
+    %     RowSat == 0, ColSat == 0 ->
+	% 	; % futuro else
+	%  ).
 
 put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
@@ -44,7 +44,7 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	(replace(Cell, ColN, _, Row, NewRow),
 	Cell == Content
 		;
-	replace(_Cell, ColN, Content, Row, NewRow)).
+	replace(_Cell, ColN, Content, Row, NewRow)). 
 	
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,3 +99,18 @@ compressRow(['#' | Resto], Comprimida) :-
     length([ '#' | Secuencia ], Longitud),
     Comprimida = [(Longitud, '#') | RestoComprimida],
     compressRow(RestoSinEncabezado, RestoComprimida).
+
+% Base case: Transposing an empty list results in an empty list.
+transpose([], []).
+
+% Transpose non-empty grid
+transpose([[]|_], []) :- !. % Ensure the transposed grid has no empty rows
+transpose(Grid, [FirstCol|RestTransposed]) :-
+    transpose_rows(Grid, FirstCol, RestGrid),
+    transpose(RestGrid, RestTransposed).
+
+% Helper predicate to transpose rows
+transpose_rows([], [], []).
+transpose_rows([[X|Xs]|RestRows], [X|FirstCol], [Xs|RestCols]) :-
+    transpose_rows(RestRows, FirstCol, RestCols).
+
