@@ -18,6 +18,11 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
     XIndexS is XIndex - 1,
     replace(X, XIndexS, Y, Xs, XsY).
 
+% choose(+Index, +List, -Element)
+% Selecciona el elemento en la posición Index de la lista List.
+choose(Index, List, Element) :-
+    nth1(Index, List, Element).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
@@ -35,84 +40,39 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat
 	(replace(Cell, ColN, _, Row, NewRow),
 	Cell == Content
 		;
-	replace(_Cell, ColN, Content, Row, NewRow)).
+	replace(_Cell, ColN, Content, Row, NewRow)),
+
+    %% ver si se verfican rowSat y colSat
+    choose(RowN, RowsClues, RC),
+    choose(ColN, ColsClues, CC),
+    checkMatches(NewGrid, RC, CC, [RowN, ColN], RowSat, ColSat).
 
 
-% Ejemplo chatgpt
+checkMatches(Grid, RClues, CClues, [RowN, ColN], RowSat, ColSat):-
+    choose(RowN, Grid, NewRow),
+    checkClues(RClues, NewRow, RowSat),
 
-/* put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, FilaSat, ColSat) :-
-    % NewGrid es el resultado de reemplazar la fila Row en la posición RowN de Grid por una nueva fila NewRow.
-    replace(Row, RowN, NewRow, Grid, NewGrid),
-
-    % NewRow es el resultado de reemplazar la celda Cell en la posición ColN de Row por Content si Cell coincide con Content,
-    % de lo contrario, reemplaza la celda en la posición ColN de Row por Content sin importar su contenido.
-    (   replace(Cell, ColN, _, Row, NewRow),
-        Cell == Content ->
-        FilaSat = 0
-    ;   replace(_, ColN, Content, Row, NewRow),
-        FilaSat = 1
-    ),
-
-    % Determinar la satisfacción de la fila RowN en la nueva cuadrícula.
-    row_satisfied(NewRow, RowN, RowsClues, FilaSat),
-
-    % Determinar la satisfacción de la columna ColN en la nueva cuadrícula.
-    nth1(ColN, NewRow, NewCell),
-    col_satisfied(NewCell, ColN, ColsClues, ColSat). */
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Este es el put/7 => debemos implementar
-% put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -RowSat, -ColSat).
-%
-
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, RowSat, ColSat):-
-	row_sat_satisfied(RowN, RowsClues, Grid, RowSat), % Verificamos si se cumplen la propiedad de las filas
-	col_sat_satisfied(ColN, ColsClues, Grid, ColSat). % Verificamos si se cumplen la propiedad de las columnas
-
-% Verificar si RowSat se cumple para una fila específica
-row_sat_satisfied(RowN, RowClues, Grid, RowSat) :-
-    nth1(RowN, Grid, Row), % Obtener la fila correspondiente
-    row_satisfied(Row, RowClues, RowSat).
-
-% Verificar si ColSat se cumple para una columna específica
-col_sat_satisfied(ColN, ColClues, Grid, ColSat) :-
-    transpose(Grid, TransposedGrid), % Transponer la cuadrícula para tratar las columnas como filas
-    row_sat_satisfied(ColN, ColClues, TransposedGrid, ColSat).
+    transpose(Grid, TransposedGrid),
+    choose(ColN,TransposedGrid, NewCol),
+    checkClues(CClues, NewCol, ColSat).
 
 % Verificar si las pistas de una fila se cumplen
-row_satisfied(Row, RowClues, RowSat) :-
-    compressRow(Row, CompressRow),
-    check_clues(CompressRow, RowClues, RowSat).
+checkClues(Clues, ListClues, Satisfied) :-
+    (Clues = ListClues ->
+        Satisfied is 1
+    ;
+        Satisfied is 0
+    ).
+    % length(Clues, NumClues),
+    % length(ListClues, NumCompressedCells),
+    % NumClues =:= NumCompressedCells,
+    % checkClues(ListClues, Clues, 1, RowSat).
 
-% Verificar si las pistas de una fila se cumplen
-check_clues(CompressRow, Clues, RowSat) :-
-    length(Clues, NumClues),
-    length(CompressRow, NumCompressedCells),
-    NumClues =:= NumCompressedCells,
-    check_clues(CompressRow, Clues, 1, RowSat).
-
-check_clues([], [], _, yes).
-check_clues([Cell|RestRow], [Clue|RestClues], N, RowSat) :-
+checkClues([], [], _, yes)
+checkClues([Cell|RestRow], [Clue|RestClues], N, RowSat) :-
     length(Cell, Clue),
     NextN is N + 1,
-    check_clues(RestRow, RestClues, NextN, RowSat).
-
-% Caso base: comprimir una lista vacía resulta en una lista vacía.
-compressRow([], []).
-
-% Caso en el que la cabeza de la lista es un espacio vacío ('_').
-% Ignoramos la secuencia de espacios vacíos y continuamos con el resto de la fila.
-compressRow(['_' | Resto], Comprimida) :-
-    compressRow(Resto, Comprimida).
-
-% Caso en el que la cabeza de la lista es una celda llena ('#').
-% Comenzamos una nueva secuencia de celdas llenas.
-compressRow(['#' | Resto], Comprimida) :-
-    append([ '#' | Secuencia ], Resto, RestoSinEncabezado),
-    length([ '#' | Secuencia ], Longitud),
-    Comprimida = [(Longitud, '#') | RestoComprimida],
-    compressRow(RestoSinEncabezado, RestoComprimida). 
+    checkClues(RestRow, RestClues, NextN, RowSat).
 
 % Base case: Transposing an empty list results in an empty list.
 transpose([], []).
@@ -127,4 +87,3 @@ transpose(Grid, [FirstCol|RestTransposed]) :-
 transpose_rows([], [], []).
 transpose_rows([[X|Xs]|RestRows], [X|FirstCol], [Xs|RestCols]) :-
     transpose_rows(RestRows, FirstCol, RestCols).
-

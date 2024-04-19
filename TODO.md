@@ -3,3 +3,4 @@ TODO list:
 * [] Que el juego sea funcional
 * [] Mas niveles?
 * [] ver como revisasr las pistas en Prolog
+* []
