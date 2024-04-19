@@ -52,7 +52,9 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
-        // hacer consulta a prolog de RowSat y ColSat => put/8
+        
+        // hacer consulta a prolog de RowSat y ColSat
+
         console.log(response['RowSat']);
         console.log(response['ColSat']);
       } 

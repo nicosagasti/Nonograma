@@ -1,6 +1,10 @@
 TODO list: 
+
+# React
 * [] Pintar de negro el toggle switch
 * [] Que el juego sea funcional
 * [] Mas niveles?
-* [] ver como revisasr las pistas en Prolog
-* []
+
+# Prolog
+* [] ver como revisar las pistas en Prolog
+* [] 

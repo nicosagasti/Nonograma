@@ -18,16 +18,15 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
     XIndexS is XIndex - 1,
     replace(X, XIndexS, Y, Xs, XsY).
 
-% choose(+Index, +List, -Element)
+% getClue(+Index, +List, -Element)
 % Selecciona el elemento en la posición Index de la lista List.
-choose(Index, List, Element) :-
-    nth1(Index, List, Element).
+getClues(Index1, List1, Element1) :-
+    nth0(Index1, List1, Element1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
-
 put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
@@ -42,48 +41,53 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)),
 
-    %% ver si se verfican rowSat y colSat
-    choose(RowN, RowsClues, RC),
-    choose(ColN, ColsClues, CC),
-    checkMatches(NewGrid, RC, CC, [RowN, ColN], RowSat, ColSat).
+    % Obtenemos las pistas REALES
+    getClues(RowN, RowsClues, RowElement),
+    getClues(ColN, ColsClues, ColElement),
+    %% Ver si se verifican RowSat y ColSat
+    checkGrid(NewGrid, RowElement, ColElement, [RowN, ColN], RowSat, ColSat).
 
+checkGrid(Grid, RowElement, ColElement, [RowN, ColN], RowSat, ColSat):-
+    % Obtenemos las filas de la Grilla  
+    getClues(RowN, Grid, NewRow),
+    getClues(ColN, Grid, NewCol),
 
-checkMatches(Grid, RClues, CClues, [RowN, ColN], RowSat, ColSat):-
-    choose(RowN, Grid, NewRow),
-    checkClues(RClues, NewRow, RowSat),
+    % Chequeamos si verifica con las Rows
+    checkClues(RowElement, NewRow, RowSat),
 
-    transpose(Grid, TransposedGrid),
-    choose(ColN,TransposedGrid, NewCol),
-    checkClues(CClues, NewCol, ColSat).
+    % Chequeamos si verifica con las Cols
+    checkClues(ColElement, NewCol, ColSat).
 
-% Verificar si las pistas de una fila se cumplen
-checkClues(Clues, ListClues, Satisfied) :-
-    (Clues = ListClues ->
-        Satisfied is 1
-    ;
-        Satisfied is 0
-    ).
-    % length(Clues, NumClues),
-    % length(ListClues, NumCompressedCells),
-    % NumClues =:= NumCompressedCells,
-    % checkClues(ListClues, Clues, 1, RowSat).
+checkClues(Element, NewList, Satisfied) :-
+    checkCluesRecursivo(Element, NewList, 0, Satisfied).
 
-checkClues([], [], _, yes)
-checkClues([Cell|RestRow], [Clue|RestClues], N, RowSat) :-
-    length(Cell, Clue),
-    NextN is N + 1,
-    checkClues(RestRow, RestClues, NextN, RowSat).
+checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
+checkCluesRecursivo([P | ], [X | ], L, 0):- % Segundo Caso Base
+      X == #,
+    L == 0,
+    L == P.
 
-% Base case: Transposing an empty list results in an empty list.
-transpose([], []).
+checkCluesRecursivo([], [X], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
+    X == "#",
+    L == 0.
 
-% Transpose non-empty grid
-transpose([[]|_], []) :- !. % Ensure the transposed grid has no empty rows
-transpose(Grid, [FirstCol|RestTransposed]) :-
-    transpose_rows(Grid, FirstCol, RestGrid),
-    transpose(RestGrid, RestTransposed).
+checkCluesRecursivo([P],[],L,1):-
+    P==L.
 
-% Helper predicate to transpose rows
-transpose_rows([], [], []).
-transpose_rows([[X|Xs]|RestRows], [X|FirstCol], [Xs|RestCols]) :-
-    transpose_rows(RestRows, FirstCol, RestCols).
+% Casos Recursivos:
+checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
+    X == #, 
+    P == Count,
+    checkCluesRecursivo([P|Ps], Xs, 0, Return).
+
+% Caso en el que X no es #
+checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
+    X == #, 
+    P == Count,
+    checkCluesRecursivo(Ps, Xs, 0, Return).
+
+% Caso en el que X es #
+checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
+    X == #, 
+    CountN is Count + 1,
+    checkCluesRecursivo([P | Ps], Xs, CountN, Return).
