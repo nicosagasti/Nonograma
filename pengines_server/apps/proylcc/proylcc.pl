@@ -23,16 +23,7 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
 
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):-
-	put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, RowSat, ColSat), % averiguamos los valores del RowSat y ColSat
-    put(Content, [RowN, ColN], RowsClues, ColsClues, TempGrid, NewGrid, 0, 0).
-    %  (
-    %     % Si ambos RowSat y ColSat son cero, llamar a put/8 nuevamente
-    %     RowSat == 0, ColSat == 0 ->
-	% 	; % futuro else
-	%  ).
-
-put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
+put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat):-
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -44,8 +35,31 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	(replace(Cell, ColN, _, Row, NewRow),
 	Cell == Content
 		;
-	replace(_Cell, ColN, Content, Row, NewRow)). 
-	
+	replace(_Cell, ColN, Content, Row, NewRow)).
+
+
+% Ejemplo chatgpt
+
+/* put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, FilaSat, ColSat) :-
+    % NewGrid es el resultado de reemplazar la fila Row en la posición RowN de Grid por una nueva fila NewRow.
+    replace(Row, RowN, NewRow, Grid, NewGrid),
+
+    % NewRow es el resultado de reemplazar la celda Cell en la posición ColN de Row por Content si Cell coincide con Content,
+    % de lo contrario, reemplaza la celda en la posición ColN de Row por Content sin importar su contenido.
+    (   replace(Cell, ColN, _, Row, NewRow),
+        Cell == Content ->
+        FilaSat = 0
+    ;   replace(_, ColN, Content, Row, NewRow),
+        FilaSat = 1
+    ),
+
+    % Determinar la satisfacción de la fila RowN en la nueva cuadrícula.
+    row_satisfied(NewRow, RowN, RowsClues, FilaSat),
+
+    % Determinar la satisfacción de la columna ColN en la nueva cuadrícula.
+    nth1(ColN, NewRow, NewCell),
+    col_satisfied(NewCell, ColN, ColsClues, ColSat). */
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Este es el put/7 => debemos implementar
@@ -98,7 +112,7 @@ compressRow(['#' | Resto], Comprimida) :-
     append([ '#' | Secuencia ], Resto, RestoSinEncabezado),
     length([ '#' | Secuencia ], Longitud),
     Comprimida = [(Longitud, '#') | RestoComprimida],
-    compressRow(RestoSinEncabezado, RestoComprimida).
+    compressRow(RestoSinEncabezado, RestoComprimida). 
 
 % Base case: Transposing an empty list results in an empty list.
 transpose([], []).
