@@ -47,9 +47,6 @@ function Game() {
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
-    
-    // console.log(rowCluesS);
-    // console.log(colCluesS);
 
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS},${squaresS}, ResGrid, RowSat, ColSat)`; 
     console.log(queryS);
@@ -58,7 +55,7 @@ function Game() {
       if (success) {
         setGrid(response['ResGrid']);
         
-        // hacer consulta a prolog de RowSat y ColSat
+        console.log(response);
 
         console.log(response['RowSat']);
         console.log(response['ColSat']);

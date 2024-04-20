@@ -33,10 +33,14 @@ checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
     L \== 0,
     L \== P.
 
-checkCluesRecursivo([], [X], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
+checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
     X == #,
     L == 0.
 
+checkCluesRecursivo([], [X | _], L, 0):-  % Caso base ,que no funciona sin el L == 0
+    X \== #,
+    L == 0.
+    
 checkCluesRecursivo([P | _],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
     P == L.
 
@@ -60,6 +64,7 @@ checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
     X == #, 
     CountN is Count + 1,
     checkCluesRecursivo([P | Ps], Xs, CountN, Return).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
