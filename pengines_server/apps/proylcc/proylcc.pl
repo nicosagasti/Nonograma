@@ -20,8 +20,8 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 
 % getClue(+Index, +List, -Element)
 % Selecciona el elemento en la posición Index de la lista List.
-getClues(Index1, List1, Element1) :-
-    nth0(Index1, List1, Element1).
+getClues(Index, List, Element) :-
+    nth0(Index, List, Element).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
