@@ -24,7 +24,7 @@ function Game() {
 
   function handleServerReady(instance) {
     pengine = instance;
-    const queryS = 'init(RowClues, ColumClues, Grid)';
+    const queryS = 'init(RowClues, ColumClues, Grid)'; // TODO Ver comillas 
     // Recibe la instancia de Prolog y utiliza la consulta init(RowsClues, ColsClues, Grid) para obtener las pistas de filas y columnas del tablero del juego
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -47,7 +47,12 @@ function Game() {
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
+    
+    // console.log(rowCluesS);
+    // console.log(colCluesS);
+
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS},${squaresS}, ResGrid, RowSat, ColSat)`; 
+    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -57,6 +62,7 @@ function Game() {
 
         console.log(response['RowSat']);
         console.log(response['ColSat']);
+
       } 
       setWaiting(false);
     });

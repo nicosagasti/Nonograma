@@ -10,7 +10,6 @@
 % replace(?X, +XIndex, +Y, +Xs, -XsY)
 %
 % XsY is the result of replacing the occurrence of X in position XIndex of Xs by Y.
-
 replace(X, 0, Y, [X|Xs], [Y|Xs]).
 
 replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
@@ -22,6 +21,67 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 % Selecciona el elemento en la posición Index de la lista List.
 getClues(Index, List, Element) :-
     nth0(Index, List, Element).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
+checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
+    X \== #,
+    L \== 0,
+    L \== P.
+
+checkCluesRecursivo([], [X], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
+    X == #,
+    L == 0.
+
+checkCluesRecursivo([P | _],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
+    P == L.
+
+checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
+    P \== L.
+
+% Casos Recursivos:
+checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
+    X \== #, 
+    P \== Count,
+    checkCluesRecursivo([P|Ps], Xs, 0, Return).
+
+% Caso en el que X no es #
+checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
+    X \== #, 
+    P == Count,
+    checkCluesRecursivo(Ps, Xs, 0, Return).
+
+% Caso en el que X es #
+checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
+    X == #, 
+    CountN is Count + 1,
+    checkCluesRecursivo([P | Ps], Xs, CountN, Return).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+checkClues(Element, NewList, Satisfied) :-
+    checkCluesRecursivo(Element, NewList, 0, Satisfied).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% checkGrid(+Grid, +RowNElement, +ColNElement, +[RowN, ColN], -RowSat, -ColSat)
+% 
+checkGrid(Grid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat):-
+    % Obtenemos las filas de la Grilla  
+    getClues(RowN, Grid, NewRow),
+    getClues(ColN, Grid, NewCol),
+
+    % Chequeamos si verifica con las Rows
+    checkClues(RowNElement, NewRow, RowSat),
+
+    % Chequeamos si verifica con las Cols
+    checkClues(ColNElement, NewCol, ColSat).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -41,56 +101,9 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)),
 
-    % Obtenemos las pistas REALES
-    getClues(RowN, RowsClues, RowElement),
-    getClues(ColN, ColsClues, ColElement),
+    % Obtenemos las pistas de la lista de Pistas
+    getClues(RowN, RowsClues, RowNElement),
+    getClues(ColN, ColsClues, ColNElement),
+
     %% Ver si se verifican RowSat y ColSat
-    checkGrid(NewGrid, RowElement, ColElement, [RowN, ColN], RowSat, ColSat).
-
-checkGrid(Grid, RowElement, ColElement, [RowN, ColN], RowSat, ColSat):-
-    % Obtenemos las filas de la Grilla  
-    getClues(RowN, Grid, NewRow),
-    getClues(ColN, Grid, NewCol),
-
-    % Chequeamos si verifica con las Rows
-    checkClues(RowElement, NewRow, RowSat),
-
-    % Chequeamos si verifica con las Cols
-    checkClues(ColElement, NewCol, ColSat).
-
-checkClues(Element, NewList, Satisfied) :-
-    checkCluesRecursivo(Element, NewList, 0, Satisfied).
-
-checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
-checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
-      X \== #,
-    L \== 0,
-    L \== P.
-
-checkCluesRecursivo([], [X], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
-    X == "#",
-    L == 0.
-
-checkCluesRecursivo([P | _],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
-    P==L.
-
-checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
-    P\==L.
-
-% Casos Recursivos:
-checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
-    X \== #, 
-    P \== Count,
-    checkCluesRecursivo([P|Ps], Xs, 0, Return).
-
-% Caso en el que X no es #
-checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
-    X \== #, 
-    P == Count,
-    checkCluesRecursivo(Ps, Xs, 0, Return).
-
-% Caso en el que X es #
-checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
-    X == #, 
-    CountN is Count + 1,
-    checkCluesRecursivo([P | Ps], Xs, CountN, Return).
+    checkGrid(NewGrid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat).
