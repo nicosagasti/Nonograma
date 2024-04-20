@@ -62,27 +62,30 @@ checkClues(Element, NewList, Satisfied) :-
     checkCluesRecursivo(Element, NewList, 0, Satisfied).
 
 checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
-checkCluesRecursivo([P | ], [X | ], L, 0):- % Segundo Caso Base
-      X == #,
-    L == 0,
-    L == P.
+checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
+      X \== #,
+    L \== 0,
+    L \== P.
 
 checkCluesRecursivo([], [X], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
     X == "#",
     L == 0.
 
-checkCluesRecursivo([P],[],L,1):-
+checkCluesRecursivo([P | _],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
     P==L.
+
+checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
+    P\==L.
 
 % Casos Recursivos:
 checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
-    X == #, 
-    P == Count,
+    X \== #, 
+    P \== Count,
     checkCluesRecursivo([P|Ps], Xs, 0, Return).
 
 % Caso en el que X no es #
 checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
-    X == #, 
+    X \== #, 
     P == Count,
     checkCluesRecursivo(Ps, Xs, 0, Return).
 
