@@ -41,16 +41,18 @@ function Game() {
       return;
     }
 
-    const content = toggleChecked ? '#' : 'X';
-
+    const content = toggleChecked ? "#" : "X";
+    
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
+  
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
-
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS},${squaresS}, ResGrid, RowSat, ColSat)`; 
-    console.log(queryS);
+    
     setWaiting(true);
+
+    console.log(queryS);
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
@@ -63,6 +65,8 @@ function Game() {
       } 
       setWaiting(false);
     });
+
+    
   }
 
   if (!grid) {

@@ -5,6 +5,7 @@
 
 :-use_module(library(lists)).
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % replace(?X, +XIndex, +Y, +Xs, -XsY)
@@ -28,40 +29,45 @@ getClues(Index, List, Element) :-
 %
 %
 checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
+
 checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
-    X \== #,
+    X \== "#",
     L \== 0,
     L \== P.
 
 checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
-    X == #,
+    X == "#",
     L == 0.
 
 checkCluesRecursivo([], [X | _], L, 0):-  % Caso base ,que no funciona sin el L == 0
-    X \== #,
+    X \== "#",
     L == 0.
     
-checkCluesRecursivo([P | _],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
+
+checkCluesRecursivo([P],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
     P == L.
 
 checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
-    P \== L.
+    P\==L.
+
+checkCluesRecursivo([P | _],[],L,0):- % Sexto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
+    P==L.
 
 % Casos Recursivos:
 checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
-    X \== #, 
+    X \== "#", 
     P \== Count,
     checkCluesRecursivo([P|Ps], Xs, 0, Return).
 
 % Caso en el que X no es #
 checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
-    X \== #, 
+    X \== "#", 
     P == Count,
     checkCluesRecursivo(Ps, Xs, 0, Return).
 
 % Caso en el que X es #
 checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
-    X == #, 
+    X == "#", 
     CountN is Count + 1,
     checkCluesRecursivo([P | Ps], Xs, CountN, Return).
 
@@ -73,14 +79,24 @@ checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
 checkClues(Element, NewList, Satisfied) :-
     checkCluesRecursivo(Element, NewList, 0, Satisfied).
 
+agregar(X,[],R)   :- R = [X].
+agregar(X,[H|T],R):- R = [X,H|T].
+
+listarCol([],_Pos,Lista)  :- Lista = [].
+listarCol([H|T],Pos,Lista):- getClues(Pos,H,Elemento),
+                             listarCol(T,Pos,ListaAux),
+                             agregar(Elemento,ListaAux,Lista).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % checkGrid(+Grid, +RowNElement, +ColNElement, +[RowN, ColN], -RowSat, -ColSat)
 % 
 checkGrid(Grid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat):-
-    % Obtenemos las filas de la Grilla  
-    getClues(RowN, Grid, NewRow),
-    getClues(ColN, Grid, NewCol),
+    % Obtenemos la fila de la Grilla  
+    nth0(RowN, Grid, NewRow),
+  	
+    %Obtenemos la columna de la Grilla
+    listarCol(Grid, ColN, NewCol),
 
     % Chequeamos si verifica con las Rows
     checkClues(RowNElement, NewRow, RowSat),
@@ -92,7 +108,7 @@ checkGrid(Grid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat):-
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
-put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, RowSat, ColSat):-
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):- %Le modifique los _a las variables
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
