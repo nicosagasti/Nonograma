@@ -15,6 +15,9 @@ function Game() {
   const [waiting, setWaiting] = useState(false);
   const [toggleChecked, setToggleChecked] = useState(false);
 
+  const [completedColumnsClues, setCompletedColumnsClues] = useState([]);
+  const [completedRowsClues, setCompletedRowsClues] = useState([]);
+
   useEffect(() => {
     // Creation of the pengine server instance.    
     // This is executed just once, after the first render.    
@@ -31,7 +34,20 @@ function Game() {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
+
+        //inicializar las completedColumnsClues
+        for(let i = 0 ; i< response['RowClues'].length ; i++){
+          completedRowsClues[i] = 0;
+        }
+
+        //inicializar las completedRowsClues
+        for(let i=0; i<response['ColumClues'].length; i++){
+          completedColumnsClues[i]=0;
+        }
+
+        //procesar la grilla, para ver si ya existe una pista satisfehca
       }
+      
     });
   }
 
@@ -44,7 +60,7 @@ function Game() {
     const content = toggleChecked ? "#" : "X";
     
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
-    const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables. squares = [["X",_,_,_,_],["X",_,"X",_,_],["X",_,_,_,_],["#","#","#",_,_],[_,_,"#","#","#"]]
+    const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
   
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
@@ -52,20 +68,28 @@ function Game() {
     
     setWaiting(true);
 
-    console.log(queryS);
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
         
-        console.log(response);
+        const RowAux = [...completedRowsClues]; //Copia superficial del arreglo completedRowsClues
+        const ColAux = [...completedColumnsClues]; //Copia superficial del arreglo completedColmnsClues
+        
+        RowAux[i] = response['RowSat']; //Modificamos el valor i de rowAux
+        ColAux[j] = response['ColSat']; //Moficiamos el valor j de colAux
+        
+        setCompletedColumnsClues(ColAux);
+        setCompletedRowsClues(RowAux);
 
-        console.log(response['RowSat']);
-        console.log(response['ColSat']);
+        console.log("Columns " + completedColumnsClues);
+        console.log("Rows " + completedRowsClues);
+      
+        //Si se cumplen todas las pistas se gana el juego.
+        //gameWon();
 
       } 
       setWaiting(false);
     });
-
     
   }
 
@@ -80,11 +104,13 @@ function Game() {
         grid={grid}
         rowsClues={rowsClues}
         colsClues={colsClues}
+        completedColumnsClues={completedColumnsClues}
+        completedRowsClues={completedRowsClues}
         onClick={(i, j) => handleClick(i, j)}
       />
       <div className="game-info">
         <Box display="flex" alignItems="center">
-          <div style={{ marginRight: '10px', backgroundColor: toggleChecked ? 'black' : 'transparent', color: toggleChecked ? 'white' : 'black' }}>{toggleChecked ? '#' : 'X'}</div>
+          <div style={{ marginRight: '10px', backgroundColor: toggleChecked ? 'black' : 'transparent', color: toggleChecked ? 'black' : 'black' }}>{toggleChecked ? '#' : 'X'}</div>
           <Switch toggleSwitch// Agregar el componente de interruptor de palanca
             checked = {toggleChecked}
             onChange = {() => setToggleChecked(!toggleChecked)}

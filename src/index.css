@@ -50,6 +50,11 @@ body {
   padding: 3px;
 }
 
+.clue.completed {
+  background-color: #275f08;
+  color: #000;
+}
+
 .clue div {
   margin: 2px
 }
