@@ -128,3 +128,25 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 
     %% Ver si se verifican RowSat y ColSat
     checkGrid(NewGrid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+checkOnes([1],1).
+
+checkOnes([0],0).
+
+checkOnes([0|_],0).
+
+checkOnes([X|Xs],R):-
+    X==1,
+    checkOnes(Xs,R).
+    
+
+checkWon([X|Xs], [Y|Ys],Res):-
+    checkOnes([X|Xs],Res1),
+    checkOnes([Y|Ys],Res2),
+    Res1==0, Res=0,
+    (Res1 == Res2, Res = 1; Res = 0).
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

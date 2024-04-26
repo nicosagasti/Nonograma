@@ -18,6 +18,8 @@ function Game() {
   const [completedColumnsClues, setCompletedColumnsClues] = useState([]);
   const [completedRowsClues, setCompletedRowsClues] = useState([]);
 
+  const [gameWonStatus, setGameWonStatus] = useState(false);
+
   useEffect(() => {
     // Creation of the pengine server instance.    
     // This is executed just once, after the first render.    
@@ -53,7 +55,7 @@ function Game() {
 
   function handleClick(i, j) {
     // No action on click if we are waiting.
-    if (waiting) {
+    if (waiting || gameWonStatus) {
       return;
     }
 
@@ -81,16 +83,36 @@ function Game() {
         setCompletedColumnsClues(ColAux);
         setCompletedRowsClues(RowAux);
 
-        console.log("Columns " + completedColumnsClues);
-        console.log("Rows " + completedRowsClues);
+        /*console.log("Columns " + completedColumnsClues);
+        console.log("Rows " + completedRowsClues);*/
       
         //Si se cumplen todas las pistas se gana el juego.
-        //gameWon();
+        gameWon(RowAux,ColAux);
 
       } 
       setWaiting(false);
     });
     
+  }
+
+  function gameWon(RowAux,ColAux){
+    const RowAuxValues= JSON.stringify(RowAux);
+    const ColAuxValues= JSON.stringify(ColAux);
+    console.log("Rows" + RowAuxValues);
+        console.log("Cols" + ColAuxValues);
+    const queryS1 = `checkWon(${RowAuxValues},${ColAuxValues},Result)`;
+
+    setWaiting(true);
+    pengine.query(queryS1, (success, response) => {
+      if (success) {
+        
+        console.log(response['Result']);  
+        setGameWonStatus(response['Result']);
+        
+      }
+      setWaiting(false);
+    });
+        
   }
 
   if (!grid) {
