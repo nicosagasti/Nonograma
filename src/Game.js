@@ -47,10 +47,31 @@ function Game() {
           completedColumnsClues[i]=0;
         }
 
-        //procesar la grilla, para ver si ya existe una pista satisfehca
+        procesarPreGrilla(response['Grid'], response['RowsClues'], response['ColsClues']);
       }
       
     });
+  }
+
+  function procesarPreGrilla(Grid, RowsClues, ColsClues){
+    let rowsLength = rowsClues.length;
+    let colsLength = colsClues.length;
+    let diagonalLength = Math.min(rowsLength, colsLength);
+
+    // Recorrer la diagonal de la matriz
+    for (let i = 0; i < diagonalLength; i++) {
+      // Aquí puedes realizar tu lógica para verificar la pista en la diagonal
+      console.log("Elemento en la diagonal:", grid[i][i]);
+    }
+
+    // Continuar recorriendo el resto de la matriz
+    for (let i = diagonalLength; i < rowsLength; i++) {
+      for (let j = diagonalLength; j < colsLength; j++) {
+        // Aquí puedes realizar tu lógica para procesar el resto de la matriz
+        console.log("Elemento en la posición no diagonal:", grid[i][j]);
+      }
+    }
+    
   }
 
   function handleClick(i, j) {
@@ -66,28 +87,19 @@ function Game() {
   
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
+
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS},${squaresS}, ResGrid, RowSat, ColSat)`; 
     
     setWaiting(true);
 
     pengine.query(queryS, (success, response) => {
       if (success) {
-        setGrid(response['ResGrid']);
+        updateCompletedClues("row",i, response['RowSat']);
+        updateCompletedClues("col",j, response['ColSat']);
         
-        const RowAux = [...completedRowsClues]; //Copia superficial del arreglo completedRowsClues
-        const ColAux = [...completedColumnsClues]; //Copia superficial del arreglo completedColmnsClues
-        
-        RowAux[i] = response['RowSat']; //Modificamos el valor i de rowAux
-        ColAux[j] = response['ColSat']; //Moficiamos el valor j de colAux
-        
-        setCompletedColumnsClues(ColAux);
-        setCompletedRowsClues(RowAux);
-
-        /*console.log("Columns " + completedColumnsClues);
-        console.log("Rows " + completedRowsClues);*/
-      
         //Si se cumplen todas las pistas se gana el juego.
         gameWon(RowAux,ColAux);
+        setGrid(response['ResGrid']);
 
       } 
       setWaiting(false);
@@ -95,18 +107,29 @@ function Game() {
     
   }
 
+  function updateCompletedClues(type, i,completed){
+    const cluesAux = type === "row" ? [...completedRowsClues] : [...completedColumnsClues]; //copia superficial del arreglo
+    CluesAux[i] = completed;
+    if (type == "row")
+      setCompletedRowsClues(CluesAux);
+    else
+    setCompletedColumnsClues(CluesAux);
+  }
+
   function gameWon(RowAux,ColAux){
     const RowAuxValues= JSON.stringify(RowAux);
     const ColAuxValues= JSON.stringify(ColAux);
-    console.log("Rows" + RowAuxValues);
-        console.log("Cols" + ColAuxValues);
+    
+    // console.log("Rows" + RowAuxValues);
+    // console.log("Cols" + ColAuxValues);
+
     const queryS1 = `checkWon(${RowAuxValues},${ColAuxValues},Result)`;
 
     setWaiting(true);
     pengine.query(queryS1, (success, response) => {
       if (success) {
-        
-        console.log(response['Result']);  
+
+        console.log(response['Result']); 
         setGameWonStatus(response['Result']);
         
       }
