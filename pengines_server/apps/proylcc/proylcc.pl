@@ -18,12 +18,6 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
     XIndexS is XIndex - 1,
     replace(X, XIndexS, Y, Xs, XsY).
 
-% getClue(+Index, +List, -Element)
-% Selecciona el elemento en la posición Index de la lista List.
-getClues(Index, List, Element) :-
-    nth0(Index, List, Element).
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %
@@ -39,7 +33,7 @@ checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcad
     X == "#",
     L == 0.
 
-checkCluesRecursivo([], [X | _], L, 0):-  % Caso base ,que no funciona sin el L == 0
+checkCluesRecursivo([], [X | _], L, 0):-  % Caso base
     X \== "#",
     L == 0.
     
@@ -83,7 +77,7 @@ agregar(X,[],R)   :- R = [X].
 agregar(X,[H|T],R):- R = [X,H|T].
 
 listarCol([],_Pos,Lista)  :- Lista = [].
-listarCol([H|T],Pos,Lista):- getClues(Pos,H,Elemento),
+listarCol([H|T],Pos,Lista):- nth0(Pos,H,Elemento),
                              listarCol(T,Pos,ListaAux),
                              agregar(Elemento,ListaAux,Lista).
 
@@ -93,8 +87,8 @@ listarCol([H|T],Pos,Lista):- getClues(Pos,H,Elemento),
 % 
 checkGrid(Grid, RowsClues, ColsClues, [RowN, ColN], RowSat, ColSat):-
     % Obtenemos las pistas de la lista de Pistas
-    getClues(RowN, RowsClues, RowNElement),
-    getClues(ColN, ColsClues, ColNElement),
+    nth0(RowN, RowsClues, RowNElement),
+    nth0(ColN, ColsClues, ColNElement),
     
     % Obtenemos la fila de la Grilla  
     nth0(RowN, Grid, NewRow),

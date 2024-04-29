@@ -61,6 +61,7 @@ function Game() {
 
     // Recorrer la diagonal de la matriz
     for (let i = 0; i < diagonalLength; i++) {
+      console.log(i);
       seCumplePista(Grid, RowClues, ColumnClues, i,i);
     }
 
@@ -70,18 +71,12 @@ function Game() {
         seCumplePista(Grid, RowClues, ColumnClues, i, j);
       }
     }
-    
   }
 
   function seCumplePista(Grid, RowsClues, ColsClues, i, j){
-    if(waiting) {
-      return;
-    }
-
     const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
     const rowCluesS = JSON.stringify(RowsClues);
     const colCluesS = JSON.stringify(ColsClues);
-
 
     const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
     
