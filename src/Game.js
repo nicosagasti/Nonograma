@@ -78,30 +78,32 @@ function Game() {
       });
     }
 
-    // // Continuar recorriendo el resto de la matriz => Verificar TODO
-    // for (let i = diagonalLength; i < rowsLength; i++) {
-    //   for (let j = diagonalLength; j < colsLength; j++) {
-    //     const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
-    //     setWaiting(true);
+    // Continuar recorriendo el resto de la matriz => Verificar TODO
+    let max
 
-    //     pengine.query(queryA, (succes, response) => {
-    //   if (succes) {
-    //     rowAux[i] = response['RowSat'];
-    //     colAux[i] = response['ColSat'];
+    for (let i = diagonalLength; i < rowsLength; i++) {
+      for (let j = diagonalLength; j < colsLength; j++) {
+        const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
+        setWaiting(true);
 
-    //     setCompletedRowsClues([...rowAux]);
-    //     setCompletedColumnsClues([...colAux]);
-    //   }
-    //   setWaiting(false);
-    // });
-    //   }
-    // }
+        pengine.query(queryA, (succes, response) => {
+      if (succes) {
+        rowAux[i] = response['RowSat'];
+        colAux[i] = response['ColSat'];
+
+        setCompletedRowsClues([...rowAux]);
+        setCompletedColumnsClues([...colAux]);
+      }
+      setWaiting(false);
+    });
+      }
+    }
 
   }
 
-  function gameWon() {
-    const RowAuxValues = JSON.stringify(completedRowsClues);
-    const ColAuxValues = JSON.stringify(completedColumnsClues);
+  function gameWon(completedRows, completedCols) {
+    const RowAuxValues = JSON.stringify(completedRows);
+    const ColAuxValues = JSON.stringify(completedCols);
     console.log("Row:", RowAuxValues);
     console.log("Col:", ColAuxValues);
 
@@ -137,16 +139,18 @@ function Game() {
     pengine.query(queryS, (success, response) => {
       if (success) {
 
-        let rowAux = [...completedRowAux];
-        let colAux = [...completedColAux];
+        let rowAux = [...completedRowsClues];
+        let colAux = [...completedColumnsClues];
 
         rowAux[i] = response['RowSat'];
+        colAux[j] = response['ColSat'];
+
+        gameWon(rowAux, colAux);
         updateCompletedClues("row", i, response['RowSat']);
         updateCompletedClues("col", j, response['ColSat']);
 
         //Si se cumplen todas las pistas se gana el juego.
         setGrid(response['ResGrid']);
-        gameWon();
       }
       setWaiting(false);
     });
