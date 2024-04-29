@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
-import Switch from '@mui/material/Switch';
-import Box from '@mui/material/Box';
-
 let pengine;
 
 function Game() {
@@ -59,55 +56,46 @@ function Game() {
       let colsLength = ColumnClues.length;
       let diagonalLength = Math.min(rowsLength, colsLength);
 
-      const rowAux = [0,0,0,0,0];
-      const colAux = [0,0,0,0,0];
-      let ret = [0,0];
+      const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
+      const rowCluesS = JSON.stringify(RowClues);
+      const colCluesS = JSON.stringify(ColumnClues);
 
-      // Recorrer la diagonal de la matriz
-      for (let i = 0; i < diagonalLength; i++) {
-        ret = seCumplePista(Grid, RowClues, ColumnClues, i,i);
-        console.log(ret);
-        rowAux[i] = ret[0];
-        colAux[i] = ret[1];
+      let rowAux = [0,0,0,0,0];
+      let colAux = [0,0,0,0,0];
+
+      // Recorrer la diagonal de la matriz cuadrada
+      for (let i = 0; i < diagonalLength; i++) {   
+          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
+          setWaiting(true);
+
+        pengine.query(queryA, (succes, response) => {
+          if(succes){
+            rowAux[i] = response['RowSat'];
+            colAux[i] = response['ColSat'];
+          }
+          setWaiting(false);
+        });
+    }
+
+      // Continuar recorriendo el resto de la matriz => Verificar TODO
+      for (let i = diagonalLength; i < rowsLength; i++) {
+        for (let j = diagonalLength; j < colsLength; j++) {
+         const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
+       setWaiting(true);
+
+       pengine.query(queryA, (succes, response) => {
+        if(succes){
+          rowAux[i] = response['RowSat'];
+          colAux[i] = response['ColSat'];
+        }
+        setWaiting(false);
+       });
       }
-
-      // // Continuar recorriendo el resto de la matriz
-      // for (let i = diagonalLength; i < rowsLength; i++) {
-      //   for (let j = diagonalLength; j < colsLength; j++) {
-      //     ret = seCumplePista(Grid, RowClues, ColumnClues, i,j);
-      //     rowAux[i] = ret[0];
-      //     colAux[j] = ret[1];
-      //   }
-      // }
+      }
 
       setCompletedRowsClues(rowAux);
       setCompletedColumnsClues(colAux);
     }
-
-  function seCumplePista(Grid, RowsClues, ColsClues, i, j){
-
-    const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
-    const rowCluesS = JSON.stringify(RowsClues);
-    const colCluesS = JSON.stringify(ColsClues);
-
-    const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-
-    let toReturn = [0,0];
-
-    setWaiting(true);
-    pengine.query(queryA, (success, response) => {
-      if (success) {
-        console.log("Se entro a la query");
-        console.log("rowSat:" ,response['RowSat']);
-        console.log("colSat:" ,response['ColSat']);
-
-        toReturn = [response['RowSat'], response['ColSat']];
-        setWaiting(false);
-      }
-    });
-    console.log("afuera del query");
-    return toReturn;
-  }
 
   function gameWon(RowAux,ColAux){
     const RowAuxValues= JSON.stringify(RowAux);
@@ -192,15 +180,10 @@ function Game() {
         onClick={(i, j) => handleClick(i, j)}
       />
       <div className="game-info">
-        <Box display="flex" alignItems="center">
-          <div style={{ marginRight: '10px', backgroundColor: toggleChecked ? 'black' : 'transparent', color: toggleChecked ? 'black' : 'black' }}>{toggleChecked ? '#' : 'X'}</div>
-          <Switch toggleSwitch// Agregar el componente de interruptor de palanca
-            checked = {toggleChecked}
-            onChange = {() => setToggleChecked(!toggleChecked)}
-            color = "primary"
-            inputProps = {{ 'aria-label': 'toggle checkbox' }}
-          />
-        </Box>
+        <button className={`toggle-btn ${toggleChecked ? 'toggled' : ''}`}
+          onClick={() => setToggleChecked(!toggleChecked)}>
+          <div className="thumb"></div>
+        </button>
         {statusText}
       </div>
     </div>
