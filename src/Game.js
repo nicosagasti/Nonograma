@@ -54,32 +54,35 @@ function Game() {
     });
   }
 
-  function procesarPreGrilla(Grid, RowClues, ColumnClues){
-    let rowsLength = RowClues.length;
-    let colsLength = ColumnClues.length;
-    let diagonalLength = Math.min(rowsLength, colsLength);
+    function procesarPreGrilla(Grid, RowClues, ColumnClues){
+      let rowsLength = RowClues.length;
+      let colsLength = ColumnClues.length;
+      let diagonalLength = Math.min(rowsLength, colsLength);
 
-    // Recorrer la diagonal de la matriz
-    for (let i = 0; i < diagonalLength; i++) {
-      console.log(i);
-      seCumplePista(Grid, RowClues, ColumnClues, i,i);
-    }
+      // Recorrer la diagonal de la matriz
+      for (let i = 0; i < diagonalLength; i++) {
+        seCumplePista(Grid, RowClues, ColumnClues, i,i);
+      }
 
-    // Continuar recorriendo el resto de la matriz
-    for (let i = diagonalLength; i < rowsLength; i++) {
-      for (let j = diagonalLength; j < colsLength; j++) {
-        seCumplePista(Grid, RowClues, ColumnClues, i, j);
+      // Continuar recorriendo el resto de la matriz
+      for (let i = diagonalLength; i < rowsLength; i++) {
+        for (let j = diagonalLength; j < colsLength; j++) {
+          seCumplePista(Grid, RowClues, ColumnClues, i,j);
+        }
       }
     }
-  }
 
   function seCumplePista(Grid, RowsClues, ColsClues, i, j){
+    if(waiting){
+      return;
+    }
+
     const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
     const rowCluesS = JSON.stringify(RowsClues);
     const colCluesS = JSON.stringify(ColsClues);
 
     const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-    
+
     setWaiting(true);
     pengine.query(queryA, (success, response) => {
       if (success) {
@@ -99,10 +102,7 @@ function Game() {
     setWaiting(true);
     pengine.query(queryS1, (success, response) => {
       if (success) {
-
-        console.log(response['Result']); 
-        setGameWonStatus(response['Result']);
-        
+        setGameWonStatus(response['Result']); 
       }
       setWaiting(false);
     });   
@@ -141,7 +141,7 @@ function Game() {
     
   }
 
-  function updateCompletedClues(type, i,completed){
+  function updateCompletedClues(type, i, completed){
     let cluesAux;
     if(type === "row"){
       cluesAux = [...completedRowsClues];
@@ -153,9 +153,11 @@ function Game() {
     cluesAux[i] = completed;
 
     if (type === "row"){
-      setCompletedRowsClues(cluesAux);}
+      setCompletedRowsClues(cluesAux);
+    }
     else{
-    setCompletedColumnsClues(cluesAux);}
+      setCompletedColumnsClues(cluesAux);
+    }
   }
 
   if (!grid) {
