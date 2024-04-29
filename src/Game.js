@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
+
 import Switch from '@mui/material/Switch';
 import Box from '@mui/material/Box';
 
@@ -168,7 +169,7 @@ function Game() {
     return null;
   }
 
-  const statusText = status==gameWon'You Won!' :'Keep playing!';
+  const statusText = gameWonStatus? 'You Won!' :'Keep playing!';
   return (
     <div className="game">
       <Board
