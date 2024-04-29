@@ -46,7 +46,7 @@ function Game() {
 
         //Inicializar las completedRowsClues
         for(let i=0; i<response['ColumClues'].length; i++){
-          completedColumnsClues[i]=0;
+          completedColumnsClues[i] = 0;
         }
 
         procesarPreGrilla(response['Grid'], response['RowClues'], response['ColumClues']);
@@ -61,14 +61,12 @@ function Game() {
 
     // Recorrer la diagonal de la matriz
     for (let i = 0; i < diagonalLength; i++) {
-      console.log("Elemento en la diagonal:", Grid[i][i]);
       seCumplePista(Grid, RowClues, ColumnClues, i,i);
     }
 
     // Continuar recorriendo el resto de la matriz
     for (let i = diagonalLength; i < rowsLength; i++) {
       for (let j = diagonalLength; j < colsLength; j++) {
-        console.log("Elemento en la posición no diagonal:", Grid[i][j]);
         seCumplePista(Grid, RowClues, ColumnClues, i, j);
       }
     }
