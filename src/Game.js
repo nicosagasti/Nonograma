@@ -29,7 +29,8 @@ function Game() {
 
   function handleServerReady(instance) {
     pengine = instance;
-    const queryS = 'init(RowClues, ColumClues, Grid)'; // TODO Ver comillas 
+    const queryS = 'init(RowClues, ColumClues, Grid)';
+
     // Recibe la instancia de Prolog y utiliza la consulta init(RowsClues, ColsClues, Grid) para obtener las pistas de filas y columnas del tablero del juego
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -37,12 +38,12 @@ function Game() {
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
 
-        //inicializar las completedColumnsClues
+        //Inicializar las completedColumnsClues
         for(let i = 0 ; i< response['RowClues'].length ; i++){
           completedRowsClues[i] = 0;
         }
 
-        //inicializar las completedRowsClues
+        //Inicializar las completedRowsClues
         for(let i=0; i<response['ColumClues'].length; i++){
           completedColumnsClues[i]=0;
         }
@@ -60,18 +61,39 @@ function Game() {
 
     // Recorrer la diagonal de la matriz
     for (let i = 0; i < diagonalLength; i++) {
-      // Aquí puedes realizar tu lógica para verificar la pista en la diagonal
       console.log("Elemento en la diagonal:", grid[i][i]);
+      seCumplePista(Grid, RowsClues, ColsClues, i,i);
+    
     }
 
     // Continuar recorriendo el resto de la matriz
     for (let i = diagonalLength; i < rowsLength; i++) {
       for (let j = diagonalLength; j < colsLength; j++) {
-        // Aquí puedes realizar tu lógica para procesar el resto de la matriz
         console.log("Elemento en la posición no diagonal:", grid[i][j]);
+        
+        seCumplePista(Grid, RowsClues, ColsClues, i, i);
       }
     }
     
+  }
+
+  function seCumplePista(Grid, RowsClues, ColsClues, i, j){
+    if(waiting) {
+      return;
+    }
+
+    const query = `verificarPista(Grid,  ${i}, ${j}, RowSat, ColSat`;
+    setWaiting(true);
+
+    pengine.query(query, (succes, response) => {
+
+      if(succes){
+        updateCompletedClues("row", i, response['RowSat']);
+        updateCompletedClues("col", j, response['ColSat']);
+
+      }
+      setWaiting(false);
+    })
   }
 
   function handleClick(i, j) {
@@ -110,7 +132,7 @@ function Game() {
   function updateCompletedClues(type, i,completed){
     const cluesAux = type === "row" ? [...completedRowsClues] : [...completedColumnsClues]; //copia superficial del arreglo
     CluesAux[i] = completed;
-    if (type == "row")
+    if (type === "row")
       setCompletedRowsClues(CluesAux);
     else
     setCompletedColumnsClues(CluesAux);
@@ -119,9 +141,6 @@ function Game() {
   function gameWon(RowAux,ColAux){
     const RowAuxValues= JSON.stringify(RowAux);
     const ColAuxValues= JSON.stringify(ColAux);
-    
-    // console.log("Rows" + RowAuxValues);
-    // console.log("Cols" + ColAuxValues);
 
     const queryS1 = `checkWon(${RowAuxValues},${ColAuxValues},Result)`;
 

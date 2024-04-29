@@ -89,9 +89,13 @@ listarCol([H|T],Pos,Lista):- getClues(Pos,H,Elemento),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% checkGrid(+Grid, +RowNElement, +ColNElement, +[RowN, ColN], -RowSat, -ColSat)
+% checkGrid(+Grid, +RowClues, +ColsClues, +[RowN, ColN], -RowSat, -ColSat)
 % 
-checkGrid(Grid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat):-
+checkGrid(Grid, RowsClues, ColsClues, [RowN, ColN], RowSat, ColSat):-
+    % Obtenemos las pistas de la lista de Pistas
+    getClues(RowN, RowsClues, RowNElement),
+    getClues(ColN, ColsClues, ColNElement),
+    
     % Obtenemos la fila de la Grilla  
     nth0(RowN, Grid, NewRow),
   	
@@ -108,7 +112,7 @@ checkGrid(Grid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat):-
 %
 % put(+Content, +Pos, +RowsClues, +ColsClues, +Grid, -NewGrid, -RowSat, -ColSat).
 %
-put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):- %Le modifique los _a las variables
+put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):- 
 	% NewGrid is the result of replacing the row Row in position RowN of Grid by a new row NewRow (not yet instantiated).
 	replace(Row, RowN, NewRow, Grid, NewGrid),
 
@@ -122,12 +126,8 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)),
 
-    % Obtenemos las pistas de la lista de Pistas
-    getClues(RowN, RowsClues, RowNElement),
-    getClues(ColN, ColsClues, ColNElement),
-
     %% Ver si se verifican RowSat y ColSat
-    checkGrid(NewGrid, RowNElement, ColNElement, [RowN, ColN], RowSat, ColSat).
+    checkGrid(NewGrid, RowsClues, ColsClues, [RowN, ColN], RowSat, ColSat).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -141,7 +141,6 @@ checkOnes([0|_],0).
 checkOnes([X|Xs],R):-
     X==1,
     checkOnes(Xs,R).
-    
 
 checkWon([X|Xs], [Y|Ys],Res):-
     checkOnes([X|Xs],Res1),
