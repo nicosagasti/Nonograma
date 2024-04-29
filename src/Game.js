@@ -59,23 +59,32 @@ function Game() {
       let colsLength = ColumnClues.length;
       let diagonalLength = Math.min(rowsLength, colsLength);
 
+      const rowAux = [0,0,0,0,0];
+      const colAux = [0,0,0,0,0];
+      let ret = [0,0];
+
       // Recorrer la diagonal de la matriz
       for (let i = 0; i < diagonalLength; i++) {
-        seCumplePista(Grid, RowClues, ColumnClues, i,i);
+        ret = seCumplePista(Grid, RowClues, ColumnClues, i,i);
+        console.log(ret);
+        rowAux[i] = ret[0];
+        colAux[i] = ret[1];
       }
 
-      // Continuar recorriendo el resto de la matriz
-      for (let i = diagonalLength; i < rowsLength; i++) {
-        for (let j = diagonalLength; j < colsLength; j++) {
-          seCumplePista(Grid, RowClues, ColumnClues, i,j);
-        }
-      }
+      // // Continuar recorriendo el resto de la matriz
+      // for (let i = diagonalLength; i < rowsLength; i++) {
+      //   for (let j = diagonalLength; j < colsLength; j++) {
+      //     ret = seCumplePista(Grid, RowClues, ColumnClues, i,j);
+      //     rowAux[i] = ret[0];
+      //     colAux[j] = ret[1];
+      //   }
+      // }
+
+      setCompletedRowsClues(rowAux);
+      setCompletedColumnsClues(colAux);
     }
 
   function seCumplePista(Grid, RowsClues, ColsClues, i, j){
-    if(waiting){
-      return;
-    }
 
     const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
     const rowCluesS = JSON.stringify(RowsClues);
@@ -83,14 +92,21 @@ function Game() {
 
     const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
 
+    let toReturn = [0,0];
+
     setWaiting(true);
     pengine.query(queryA, (success, response) => {
       if (success) {
-        updateCompletedClues("row", i, response['RowSat']);
-        updateCompletedClues("col", j, response['ColSat']);
+        console.log("Se entro a la query");
+        console.log("rowSat:" ,response['RowSat']);
+        console.log("colSat:" ,response['ColSat']);
+
+        toReturn = [response['RowSat'], response['ColSat']];
+        setWaiting(false);
       }
-      setWaiting(false);
     });
+    console.log("afuera del query");
+    return toReturn;
   }
 
   function gameWon(RowAux,ColAux){
