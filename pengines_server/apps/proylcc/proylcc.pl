@@ -139,5 +139,4 @@ checkOnes([X|Xs],R):-
 checkWon([X|Xs], [Y|Ys],Res):-
     checkOnes([X|Xs],Res1),
     checkOnes([Y|Ys],Res2),
-    Res1==0, Res=0,
-    (Res1 == Res2, Res = 1; Res = 0).
+     (Res1 == 0 -> Res = 0 ; (Res1 == Res2 -> Res = 1 ; Res = 0)).

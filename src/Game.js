@@ -36,22 +36,20 @@ function Game() {
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
 
-        //Inicializar las completedColumnsClues
-        for (let i = 0; i < response['RowClues'].length; i++) {
-          completedRowsClues[i] = 0;
-        }
+        // Inicializar las completedRowsClues con ceros
+        const initialCompletedRowsClues = Array(response['RowClues'].length).fill(0);
+        setCompletedRowsClues(initialCompletedRowsClues);
 
-        //Inicializar las completedRowsClues
-        for (let i = 0; i < response['ColumClues'].length; i++) {
-          completedColumnsClues[i] = 0;
-        }
+        // Inicializar las completedColumnsClues con ceros
+        const initialCompletedColumnsClues = Array(response['ColumClues'].length).fill(0);
+        setCompletedColumnsClues(initialCompletedColumnsClues);
 
-        procesarPreGrilla(response['Grid'], response['RowClues'], response['ColumClues']);
+        initializeClues(response['Grid'], response['RowClues'], response['ColumClues']);
       }
     });
   }
 
-  function procesarPreGrilla(Grid, RowClues, ColumnClues) {
+  function initializeClues(Grid, RowClues, ColumnClues) {
     let rowsLength = RowClues.length;
     let colsLength = ColumnClues.length;
     let diagonalLength = Math.min(rowsLength, colsLength);
@@ -87,26 +85,34 @@ function Game() {
     //     setWaiting(true);
 
     //     pengine.query(queryA, (succes, response) => {
+    //   if (succes) {
+    //     rowAux[i] = response['RowSat'];
+    //     colAux[i] = response['ColSat'];
 
-    //       rowAux[i] = response['RowSat'];
-    //       colAux[i] = response['ColSat'];
-
-    //     });
+    //     setCompletedRowsClues([...rowAux]);
+    //     setCompletedColumnsClues([...colAux]);
+    //   }
+    //   setWaiting(false);
+    // });
     //   }
     // }
 
   }
 
-  function gameWon(RowAux, ColAux) {
-    const RowAuxValues = JSON.stringify(RowAux);
-    const ColAuxValues = JSON.stringify(ColAux);
+  function gameWon() {
+    const RowAuxValues = JSON.stringify(completedRowsClues);
+    const ColAuxValues = JSON.stringify(completedColumnsClues);
+    console.log("Row:", RowAuxValues);
+    console.log("Col:", ColAuxValues);
 
     const queryS1 = `checkWon(${RowAuxValues},${ColAuxValues},Result)`;
-
+    console.log(queryS1);
     setWaiting(true);
     pengine.query(queryS1, (success, response) => {
       if (success) {
+        console.log("gameWon: ", response['Result']);
         setGameWonStatus(response['Result']);
+
       }
       setWaiting(false);
     });
@@ -126,19 +132,21 @@ function Game() {
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
 
-    const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS},${squaresS}, ResGrid, RowSat, ColSat)`;
-
+    const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
     setWaiting(true);
-
     pengine.query(queryS, (success, response) => {
       if (success) {
+
+        let rowAux = [...completedRowAux];
+        let colAux = [...completedColAux];
+
+        rowAux[i] = response['RowSat'];
         updateCompletedClues("row", i, response['RowSat']);
         updateCompletedClues("col", j, response['ColSat']);
 
         //Si se cumplen todas las pistas se gana el juego.
-        gameWon(completedRowsClues, completedColumnsClues);
         setGrid(response['ResGrid']);
-
+        gameWon();
       }
       setWaiting(false);
     });
@@ -146,22 +154,10 @@ function Game() {
   }
 
   function updateCompletedClues(type, i, completed) {
-    let cluesAux;
-    if (type === "row") {
-      cluesAux = [...completedRowsClues];
-    }
-    else {
-      cluesAux = [...completedColumnsClues];
-    }
-
+    let cluesAux = type === "row" ? [...completedRowsClues] : [...completedColumnsClues];
     cluesAux[i] = completed;
+    type === "row" ? setCompletedRowsClues(cluesAux) : setCompletedColumnsClues(cluesAux);
 
-    if (type === "row") {
-      setCompletedRowsClues(cluesAux);
-    }
-    else {
-      setCompletedColumnsClues(cluesAux);
-    }
   }
 
   if (!grid) {
@@ -169,6 +165,7 @@ function Game() {
   }
 
   const statusText = gameWonStatus ? 'You Won!' : 'Keep playing!';
+
   return (
     <div className="game">
       <Board
