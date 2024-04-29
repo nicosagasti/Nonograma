@@ -79,18 +79,21 @@ function Game() {
       return;
     }
 
-    const queryS = `checkGrid(${Grid}, ${RowsClues}, ${ColsClues}, [$i}, ${j}], RowSat, ColSat)`;
+    const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
+    const rowCluesS = JSON.stringify(RowsClues);
+    const colCluesS = JSON.stringify(ColsClues);
+
+
+    const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+    
     setWaiting(true);
-
-    pengine.query(queryS, (succes, response) => {
-
-      if(succes){
+    pengine.query(queryA, (success, response) => {
+      if (success) {
         updateCompletedClues("row", i, response['RowSat']);
         updateCompletedClues("col", j, response['ColSat']);
-
       }
       setWaiting(false);
-    })
+    });
   }
 
   function gameWon(RowAux,ColAux){
@@ -154,17 +157,18 @@ function Game() {
     }
 
     cluesAux[i] = completed;
-    if (type === "row")
-      setCompletedRowsClues(cluesAux);
-    else
-    setCompletedColumnsClues(cluesAux);
+
+    if (type === "row"){
+      setCompletedRowsClues(cluesAux);}
+    else{
+    setCompletedColumnsClues(cluesAux);}
   }
 
   if (!grid) {
     return null;
   }
 
-  const statusText = 'Keep playing!';
+  const statusText = status==gameWon'You Won!' :'Keep playing!';
   return (
     <div className="game">
       <Board
