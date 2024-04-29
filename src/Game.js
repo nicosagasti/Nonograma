@@ -1,3 +1,4 @@
+// /* eslint-disable react-hooks/exhaustive-deps */ TODO ver warning
 import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
@@ -51,7 +52,7 @@ function Game() {
     });
   }
 
-  function procesarPreGrilla(Grid, RowClues, ColumnClues) {
+  async function procesarPreGrilla(Grid, RowClues, ColumnClues) {
     let rowsLength = RowClues.length;
     let colsLength = ColumnClues.length;
     let diagonalLength = Math.min(rowsLength, colsLength);
@@ -63,38 +64,49 @@ function Game() {
     let rowAux = [0, 0, 0, 0, 0];
     let colAux = [0, 0, 0, 0, 0];
 
-    // Recorrer la diagonal de la matriz cuadrada
+    // Array para almacenar todas las consultas promisificadas
+    const queries = [];
+
+    // Recorrer la diagonal de la matriz cuadrada y crear consultas promisificadas
     for (let i = 0; i < diagonalLength; i++) {
       const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
-      setWaiting(true);
-
-      pengine.query(queryA, (succes, response) => {
-        if (succes) {
-          rowAux[i] = response['RowSat'];
-          colAux[i] = response['ColSat'];
-        }
-        setWaiting(false);
-      });
-    }
-
-    // Continuar recorriendo el resto de la matriz => Verificar TODO
-    for (let i = diagonalLength; i < rowsLength; i++) {
-      for (let j = diagonalLength; j < colsLength; j++) {
-        const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
-        setWaiting(true);
-
-        pengine.query(queryA, (succes, response) => {
-          if (succes) {
+      const promiseQuery = new Promise((resolve, reject) => {
+        pengine.query(queryA, (success, response) => {
+          if (success) {
             rowAux[i] = response['RowSat'];
             colAux[i] = response['ColSat'];
+            resolve(); // Resolvemos la promesa una vez que se haya completado la consulta
+          } else {
+            reject(); // Rechazamos la promesa si la consulta falla
           }
-          setWaiting(false);
         });
-      }
+      });
+      queries.push(promiseQuery); // Agregamos la promesa a nuestro array de promesas
     }
 
-    setCompletedRowsClues(rowAux);
-    setCompletedColumnsClues(colAux);
+    try {
+      await Promise.all(queries); // Esperamos a que todas las consultas se completen
+      setCompletedRowsClues(rowAux);
+      setCompletedColumnsClues(colAux);
+    } catch (error) {
+      console.error('Hubo un error al procesar las consultas:', error);
+    }
+
+    // // Continuar recorriendo el resto de la matriz => Verificar TODO
+    // for (let i = diagonalLength; i < rowsLength; i++) {
+    //   for (let j = diagonalLength; j < colsLength; j++) {
+    //     const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+    //     setWaiting(true);
+    //     pengine.query(queryA, (succes, response) => {
+    //       if (succes) {
+    //         rowAux[i] = response['RowSat'];
+    //         colAux[j] = response['ColSat'];
+    //       }
+    //       setWaiting(false);
+    //     });
+    //   }
+    // }
+
   }
 
   function gameWon(RowAux, ColAux) {
@@ -184,8 +196,8 @@ function Game() {
           onClick={() => setToggleChecked(!toggleChecked)}>
           <div className="thumb"></div>
         </button>
-        {statusText}
       </div>
+      {statusText}
     </div>
   );
 
