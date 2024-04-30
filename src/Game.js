@@ -63,7 +63,7 @@ function Game() {
 
     // Recorrer la diagonal de la matriz cuadrada
     for (let i = 0; i < diagonalLength; i++) {
-      const queryA = `checkGrid(${ squaresS }, ${ rowCluesS }, ${ colCluesS }, [${ i }, ${ i }], RowSat, ColSat)`;
+      const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
 
       setWaiting(true);
       pengine.query(queryA, (succes, response) => {
@@ -78,44 +78,48 @@ function Game() {
       });
     }
 
-    // Continuar recorriendo el resto de la matriz => Verificar TODO
-    const maxRowsColsLength = Math.max(rowsLength, colsLength);
-    console.log("diagonal: ", diagonalLength);
-    let i, j;
-    if (maxRowsColsLength === rowsLength) {
-      i = diagonalLength++;
-      j = 0;
-    } else {
-      i = 0;
-      j = diagonalLength++;
-    }
-    for (i; i < rowsLength; i++) {
-      for (j; j < colsLength; j++) {
-        console.log("i: ", i);
-        console.log("j: ", j);
-        const queryA = `checkGrid(${ squaresS }, ${ rowCluesS }, ${ colCluesS }, [${ i }, ${ j }], RowSat, ColSat)`;
-        setWaiting(true);
+    // Continuar recorriendo el resto de la matriz
+    if (rowsLength > colsLength) {
+      // Iterar sobre las filas restantes
+      for (let i = diagonalLength; i < rowsLength; i++) {
+        for (let j = 0; j < colsLength; j++) {
+          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+          setWaiting(true);
 
-        pengine.query(queryA, (success, response) => {
-          if (success) {
-            const newRowAux = [...rowAux];
-            const newColAux = [...colAux];
-            if (i < rowsLength) {
-              newRowAux[i] = response['RowSat'];
+          pengine.query(queryA, (success, response) => {
+            if (success) {
+              rowAux[i] = response['RowSat'];
+              colAux[j] = response['ColSat'];
+              setCompletedRowsClues([...rowAux]);
+              setCompletedColumnsClues([...colAux]);
             }
-            if (j < rowsLength) {
-              newColAux[j] = response['ColSat'];
+            setWaiting(false);
+          });
+        }
+      }
+    } else if (rowsLength < colsLength) { 
+      // Iterar sobre las columnas restantes
+      for (let j = diagonalLength; j < colsLength; j++) {
+        for (let i = 0; i < rowsLength; i++) {
+          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+          setWaiting(true);
+
+          pengine.query(queryA, (success, response) => {
+            if (success) {
+              rowAux[i] = response['RowSat'];
+              colAux[j] = response['ColSat'];
+              setCompletedRowsClues([...rowAux]);
+              setCompletedColumnsClues([...colAux]);
             }
-            setCompletedRowsClues([...newRowAux]);
-            setCompletedColumnsClues([...newColAux]);
-          }
-          setWaiting(false);
-        });
+            setWaiting(false);
+          });
+        }
       }
     }
 
+    console.log("row", completedRowsClues); 
+    console.log("col", completedColumnsClues);
   }
-
 
   function gameWon(completedRows, completedCols) {
     const RowAuxValues = JSON.stringify(completedRows);
@@ -130,7 +134,6 @@ function Game() {
       if (success) {
         console.log("gameWon: ", response['Result']);
         setGameWonStatus(response['Result']);
-
       }
       setWaiting(false);
     });
@@ -161,11 +164,15 @@ function Game() {
         rowAux[i] = response['RowSat'];
         colAux[j] = response['ColSat'];
 
-        gameWon(rowAux, colAux);
-        updateCompletedClues("row", i, response['RowSat']);
-        updateCompletedClues("col", j, response['ColSat']);
-
         //Si se cumplen todas las pistas se gana el juego.
+        gameWon(rowAux, colAux);
+
+        setCompletedRowsClues(rowAux);
+        setCompletedColumnsClues(colAux);
+
+        // updateCompletedClues("row", i, response['RowSat']);
+        // updateCompletedClues("col", j, response['ColSat']);
+
         setGrid(response['ResGrid']);
       }
       setWaiting(false);
