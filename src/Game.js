@@ -54,7 +54,7 @@ function Game() {
     let colsLength = ColumnClues.length;
     let diagonalLength = Math.min(rowsLength, colsLength);
 
-    const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
+    const squaresS = JSON.stringify(Grid).replaceAll('""', '');
     const rowCluesS = JSON.stringify(RowClues);
     const colCluesS = JSON.stringify(ColumnClues);
 
@@ -63,7 +63,7 @@ function Game() {
 
     // Recorrer la diagonal de la matriz cuadrada
     for (let i = 0; i < diagonalLength; i++) {
-      const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
+      const queryA = `checkGrid(${ squaresS }, ${ rowCluesS }, ${ colCluesS }, [${ i }, ${ i }], RowSat, ColSat)`;
 
       setWaiting(true);
       pengine.query(queryA, (succes, response) => {
@@ -80,32 +80,42 @@ function Game() {
 
     // Continuar recorriendo el resto de la matriz => Verificar TODO
     const maxRowsColsLength = Math.max(rowsLength, colsLength);
-    console.log("diagonal: ",diagonalLength);
-    for (let i = diagonalLength; i < maxRowsColsLength; i++) {
-      for (let j = diagonalLength; j < maxRowsColsLength; j++) {
-          console.log("i: ",i);
-          console.log("j: ", j);
-          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-          setWaiting(true);
+    console.log("diagonal: ", diagonalLength);
+    let i, j;
+    if (maxRowsColsLength === rowsLength) {
+      i = diagonalLength++;
+      j = 0;
+    } else {
+      i = 0;
+      j = diagonalLength++;
+    }
+    for (i; i < rowsLength; i++) {
+      for (j; j < colsLength; j++) {
+        console.log("i: ", i);
+        console.log("j: ", j);
+        const queryA = `checkGrid(${ squaresS }, ${ rowCluesS }, ${ colCluesS }, [${ i }, ${ j }], RowSat, ColSat)`;
+        setWaiting(true);
 
-          pengine.query(queryA, (success, response) => {
-            if (success) {
-              const newRowAux = [...rowAux];
-              const newColAux = [...colAux];
-              if(i<rowsLength){
-              newRowAux[i] = response['RowSat'];}
-              if(j<rowsLength){
-              newColAux[j] = response['ColSat'];}
-              setCompletedRowsClues([...newRowAux]);
-              setCompletedColumnsClues([...newColAux]);
+        pengine.query(queryA, (success, response) => {
+          if (success) {
+            const newRowAux = [...rowAux];
+            const newColAux = [...colAux];
+            if (i < rowsLength) {
+              newRowAux[i] = response['RowSat'];
             }
-            setWaiting(false);
-          });
+            if (j < rowsLength) {
+              newColAux[j] = response['ColSat'];
+            }
+            setCompletedRowsClues([...newRowAux]);
+            setCompletedColumnsClues([...newColAux]);
+          }
+          setWaiting(false);
+        });
       }
     }
 
-
   }
+
 
   function gameWon(completedRows, completedCols) {
     const RowAuxValues = JSON.stringify(completedRows);
