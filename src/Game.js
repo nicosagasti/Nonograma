@@ -79,25 +79,36 @@ function Game() {
     }
 
     // Continuar recorriendo el resto de la matriz => Verificar TODO
-    let max
+    const maxRowsColsLength = Math.max(rowsLength, colsLength);
 
-    for (let i = diagonalLength; i < rowsLength; i++) {
-      for (let j = diagonalLength; j < colsLength; j++) {
+  for (let i = diagonalLength; i < maxRowsColsLength; i++) {
+    for (let j = diagonalLength; j < maxRowsColsLength; j++) {
+      if (i < rowsLength && j < colsLength) {
         const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
         setWaiting(true);
 
-        pengine.query(queryA, (succes, response) => {
-      if (succes) {
-        rowAux[i] = response['RowSat'];
-        colAux[i] = response['ColSat'];
+      pengine.query(queryA, (success, response) => {
+        if (success) {
+          const newRowAux = [...rowAux];
+          const newColAux = [...colAux];
 
-        setCompletedRowsClues([...rowAux]);
-        setCompletedColumnsClues([...colAux]);
-      }
-      setWaiting(false);
-    });
-      }
+          if (i < rowsLength) {
+            newRowAux[i] = response['RowSat'];
+          }
+
+          if (j < colsLength) {
+            newColAux[j] = response['ColSat'];
+          }
+
+          setCompletedRowsClues(newRowAux);
+          setCompletedColumnsClues(newColAux);
+        }
+        setWaiting(false);
+      });
     }
+  }
+}
+
 
   }
 
