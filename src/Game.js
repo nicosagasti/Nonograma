@@ -80,34 +80,29 @@ function Game() {
 
     // Continuar recorriendo el resto de la matriz => Verificar TODO
     const maxRowsColsLength = Math.max(rowsLength, colsLength);
+    console.log("diagonal: ",diagonalLength);
+    for (let i = diagonalLength; i < maxRowsColsLength; i++) {
+      for (let j = diagonalLength; j < maxRowsColsLength; j++) {
+          console.log("i: ",i);
+          console.log("j: ", j);
+          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+          setWaiting(true);
 
-  for (let i = diagonalLength; i < maxRowsColsLength; i++) {
-    for (let j = diagonalLength; j < maxRowsColsLength; j++) {
-      if (i < rowsLength && j < colsLength) {
-        const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
-        setWaiting(true);
-
-      pengine.query(queryA, (success, response) => {
-        if (success) {
-          const newRowAux = [...rowAux];
-          const newColAux = [...colAux];
-
-          if (i < rowsLength) {
-            newRowAux[i] = response['RowSat'];
-          }
-
-          if (j < colsLength) {
-            newColAux[j] = response['ColSat'];
-          }
-
-          setCompletedRowsClues(newRowAux);
-          setCompletedColumnsClues(newColAux);
-        }
-        setWaiting(false);
-      });
+          pengine.query(queryA, (success, response) => {
+            if (success) {
+              const newRowAux = [...rowAux];
+              const newColAux = [...colAux];
+              if(i<rowsLength){
+              newRowAux[i] = response['RowSat'];}
+              if(j<rowsLength){
+              newColAux[j] = response['ColSat'];}
+              setCompletedRowsClues([...newRowAux]);
+              setCompletedColumnsClues([...newColAux]);
+            }
+            setWaiting(false);
+          });
+      }
     }
-  }
-}
 
 
   }
