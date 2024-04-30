@@ -116,23 +116,16 @@ function Game() {
         }
       }
     }
-
-    console.log("row", completedRowsClues); 
-    console.log("col", completedColumnsClues);
   }
 
   function gameWon(completedRows, completedCols) {
     const RowAuxValues = JSON.stringify(completedRows);
     const ColAuxValues = JSON.stringify(completedCols);
-    console.log("Row:", RowAuxValues);
-    console.log("Col:", ColAuxValues);
 
     const queryS1 = `checkWon(${RowAuxValues},${ColAuxValues},Result)`;
-    console.log(queryS1);
     setWaiting(true);
     pengine.query(queryS1, (success, response) => {
       if (success) {
-        console.log("gameWon: ", response['Result']);
         setGameWonStatus(response['Result']);
       }
       setWaiting(false);

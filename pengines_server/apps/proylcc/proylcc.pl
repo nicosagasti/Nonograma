@@ -33,10 +33,9 @@ checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcad
     X == "#",
     L == 0.
 
-checkCluesRecursivo([], [X | _], L, 0):-  % Caso base
-    X \== "#",
-    L == 0.
-    
+%checkCluesRecursivo([], [X | _], L, 0):-  % Caso base
+    %X \== "#",
+    %L == 0.
 
 checkCluesRecursivo([P],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
     P == L.
@@ -48,6 +47,10 @@ checkCluesRecursivo([P | _],[],L,0):- % Sexto Caso Base => Cuando nos quedamos s
     P==L.
 
 % Casos Recursivos:
+checkCluesRecursivo([],[X |Xs],0, Return):-
+    X \== "#",
+    checkCluesRecursivo([],Xs,0,Return).
+
 checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
     X \== "#", 
     P \== Count,
