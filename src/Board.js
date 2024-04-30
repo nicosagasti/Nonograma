@@ -2,7 +2,7 @@ import React from 'react';
 import Square from './Square';
 import Clue from './Clue';
 
-function Board({ grid, rowsClues, colsClues, completedRowsClues, completedColumnsClues, onClick }) {
+function Board({ grid, rowsClues, colsClues, completedRowsClues, completedColumnsClues, onClick, gameWon }) {
     const numOfRows = grid.length;
     const numOfCols = grid[0].length;
     return (
@@ -58,6 +58,7 @@ function Board({ grid, rowsClues, colsClues, completedRowsClues, completedColumn
                                 value={cell}
                                 onClick={() => onClick(i, j)}
                                 key={i + j}
+                                className={gameWon? 'won' : ''}
                             />
                         )
                     )}

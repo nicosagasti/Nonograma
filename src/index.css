@@ -113,3 +113,31 @@ body {
 .toggle-btn.toggled .thumb {
   left: calc(50px - 25px);
 }
+
+@keyframes sparkle {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(0, -20px) scale(2);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.square {
+  position: relative; /* Asegúrate de que esto esté si no está ya */
+}
+
+.square.won:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  animation: sparkle 1s ease-in-out infinite;
+  z-index: 1; /* Asegura que el pseudo-elemento esté sobre otros contenidos */
+}

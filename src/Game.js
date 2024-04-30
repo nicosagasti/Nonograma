@@ -195,6 +195,7 @@ function Game() {
         completedColumnsClues={completedColumnsClues}
         completedRowsClues={completedRowsClues}
         onClick={(i, j) => handleClick(i, j)}
+        gameWon={gameWonStatus}
       />
       <div className="game-info">
         <button className={`toggle-btn ${toggleChecked ? 'toggled' : ''}`}
