@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, version } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
@@ -184,7 +184,7 @@ function Game() {
     return null;
   }
 
-  const statusText = gameWonStatus ? 'You Won!' : 'Keep playing!';
+  const statusText = gameWonStatus ? 'You´ve Won!' : 'Keep playing!';
 
   return (
     <div className="game">
@@ -202,9 +202,18 @@ function Game() {
           onClick={() => setToggleChecked(!toggleChecked)}>
           <div className="thumb"></div>
         </button>
+        {gameWonStatus && (
+        <div>
+          <div className="star" style={{top: '30%', left: '20%'}}></div>
+          <div className="star" style={{top: '50%', left: '50%'}}></div>
+          <div className="star" style={{top: '70%', left: '80%'}}></div>
+        </div>
+      )}
       </div>
+      <div style={{ fontSize: '30px', textAlign: 'center', margin: '20px' , position: 'absolute', left: '350px', marginTop: '150px'}}>
       {statusText}
     </div>
+  </div>
   );
 
 }

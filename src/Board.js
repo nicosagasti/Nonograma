@@ -58,7 +58,7 @@ function Board({ grid, rowsClues, colsClues, completedRowsClues, completedColumn
                                 value={cell}
                                 onClick={() => onClick(i, j)}
                                 key={i + j}
-                                className={gameWon? 'won' : ''}
+                                gameWon={gameWon}
                             />
                         )
                     )}
