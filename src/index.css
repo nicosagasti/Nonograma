@@ -74,7 +74,7 @@ body {
 }
 
 .game-info {
-  margin-left: 20px;
+  margin-left: 50px;
 }
 
 .toggle-btn {
@@ -114,6 +114,32 @@ body {
   left: calc(50px - 25px);
 }
 
+.toggle-btn.toggled::after {
+  content: "\25A0"; /* Código Unicode para un cuadrado */
+  display: none;
+  width: 12px;
+  height: 12px;
+  background-color: #080808;
+  position: absolute;
+  right: 29px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.toggle-btn:not(.toggled)::before {
+  content: "X";
+  display: block; 
+  position: absolute;
+  top: 50%; 
+  transform: translateY(-50%); 
+  right: 9px;
+}
+
+.toggle-btn.toggled::after {
+  display: block; /* Mostrar solo cuando está toggled */
+}
+
+
 @keyframes sparkle {
   0% {
     transform: translate(0, 0) scale(1);
@@ -130,14 +156,3 @@ body {
   position: relative; /* Asegúrate de que esto esté si no está ya */
 }
 
-.square.won:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
-  animation: sparkle 1s ease-in-out infinite;
-  z-index: 1; /* Asegura que el pseudo-elemento esté sobre otros contenidos */
-}

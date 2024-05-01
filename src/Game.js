@@ -198,7 +198,7 @@ function Game() {
         gameWon={gameWonStatus}
       />
       <div className="game-info">
-        <button className={`toggle-btn ${toggleChecked ? 'toggled' : ''}`}
+        <button className={`toggle-btn ${toggleChecked ? 'toggled ' : ''}`}
           onClick={() => setToggleChecked(!toggleChecked)}>
           <div className="thumb"></div>
         </button>
