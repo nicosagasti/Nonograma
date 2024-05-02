@@ -20,10 +20,10 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+% checkCluesRecursivo(+listaPista, +listaGrilla, +Contador, +Retorno)
 %
-%
+% Verifica si la lista de pistas se satisface
 checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
-
 checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
     X \== "#",
     L \== 0,
@@ -32,15 +32,13 @@ checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
 checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
     X == "#",
     L == 0.
-
 checkCluesRecursivo([P],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
     P == L.
 
 checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
-    P\==L.
-
-checkCluesRecursivo([P | _],[],L,0):- % Sexto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
-    P==L.
+    P \== L.
+checkCluesRecursivo([P | _],[],L,0):- % Sexto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L == P
+    P == L.
 
 % Casos Recursivos:
 checkCluesRecursivo([],[X |Xs],0, Return):-
@@ -67,23 +65,40 @@ checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+% checkClues(+ClueList, +GridList, -Satisfied)
 %
+% Metodo cascara: Verifica si la lista de pistas se satisface
+checkClues(ClueList, GridList, Satisfied) :-
+    checkCluesRecursivo(ClueList, GridList, 0, Satisfied).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-checkClues(Element, NewList, Satisfied) :-
-    checkCluesRecursivo(Element, NewList, 0, Satisfied).
+% addElement(+Element, +List, -Result)
+%
+% Adds an element to the beginning of a list
+addElement(X,[],R)   :- 
+    R = [X].
+addElement(X,[Head|Tail],R):- 
+    R = [X,Head|Tail].
 
-agregar(X,[],R)   :- R = [X].
-agregar(X,[H|T],R):- R = [X,H|T].
 
-listarCol([],_Pos,Lista)  :- Lista = [].
-listarCol([H|T],Pos,Lista):- nth0(Pos,H,Elemento),
-                             listarCol(T,Pos,ListaAux),
-                             agregar(Elemento,ListaAux,Lista).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% getValuesFromColumn(+GridList, +ColumnIndex, -ColumnValues)
+%
+% Extracts the values from a specific column in a grid represented as a list of lists.
+getValuesFromColumn([],_Pos,List)  :- 
+    List = [].
+getValuesFromColumn([H|T],Pos,List):- 
+    nth0(Pos,H,Element),
+    getValuesFromColumn(T,Pos,ListAux),
+    addElement(Element,ListAux,List).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % checkGrid(+Grid, +RowClues, +ColsClues, +[RowN, ColN], -RowSat, -ColSat)
 % 
+% Chequea si la fila[RowN] y la columna[[ColN] verifican a las respectivas pistas
 checkGrid(Grid, RowsClues, ColsClues, [RowN, ColN], RowSat, ColSat):-
     % Obtenemos las pistas de la lista de Pistas
     nth0(RowN, RowsClues, RowNElement),
@@ -93,7 +108,7 @@ checkGrid(Grid, RowsClues, ColsClues, [RowN, ColN], RowSat, ColSat):-
     nth0(RowN, Grid, NewRow),
   	
     %Obtenemos la columna de la Grilla
-    listarCol(Grid, ColN, NewCol),
+    getValuesFromColumn(Grid, ColN, NewCol),
 
     % Chequeamos si verifica con las Rows
     checkClues(RowNElement, NewRow, RowSat),
@@ -125,16 +140,28 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% checkOnes(+List, -Return)
+%
+% Verifica si la lista pasada por parametro esta completamente formada por unos.
+
+% Casos bases:
 checkOnes([1],1).
-
 checkOnes([0],0).
-
 checkOnes([0|_],0).
 
+%Caso Recursivo :
 checkOnes([X|Xs],R):-
     X==1,
     checkOnes(Xs,R).
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% checkWon(+RowList, +ColList, -Return)
+%
+% Verifica si ambas listas son formadas completamente por unos.
 checkWon([X|Xs], [Y|Ys],Res):-
     checkOnes([X|Xs],Res1),
     checkOnes([Y|Ys],Res2),
