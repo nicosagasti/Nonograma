@@ -1,4 +1,4 @@
-import React, { useEffect, useState, version } from 'react';
+import React, { useEffect, useState} from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
@@ -163,20 +163,10 @@ function Game() {
         setCompletedRowsClues(rowAux);
         setCompletedColumnsClues(colAux);
 
-        // updateCompletedClues("row", i, response['RowSat']);
-        // updateCompletedClues("col", j, response['ColSat']);
-
         setGrid(response['ResGrid']);
       }
       setWaiting(false);
     });
-
-  }
-
-  function updateCompletedClues(type, i, completed) {
-    let cluesAux = type === "row" ? [...completedRowsClues] : [...completedColumnsClues];
-    cluesAux[i] = completed;
-    type === "row" ? setCompletedRowsClues(cluesAux) : setCompletedColumnsClues(cluesAux);
 
   }
 
