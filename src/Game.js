@@ -61,6 +61,8 @@ function Game() {
     let rowAux = new Array(rowsLength).fill(0);
     let colAux = new Array(colsLength).fill(0);
 
+    // Vamos a verificar si existe alguna pista que se satisface antes de iniciar el juego.
+
     // Recorrer la diagonal de la matriz cuadrada
     for (let i = 0; i < diagonalLength; i++) {
       const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
