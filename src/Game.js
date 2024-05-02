@@ -187,20 +187,12 @@ function Game() {
         completedColumnsClues={completedColumnsClues}
         completedRowsClues={completedRowsClues}
         onClick={(i, j) => handleClick(i, j)}
-        gameWon={gameWonStatus}
       />
       <div className="game-info">
         <button className={`toggle-btn ${toggleChecked ? 'toggled ' : ''}`}
           onClick={() => setToggleChecked(!toggleChecked)}>
           <div className="thumb"></div>
         </button>
-        {gameWonStatus && (
-        <div>
-          <div className="star" style={{top: '30%', left: '20%'}}></div>
-          <div className="star" style={{top: '50%', left: '50%'}}></div>
-          <div className="star" style={{top: '70%', left: '80%'}}></div>
-        </div>
-      )}
       </div>
       <div style={{ fontSize: '30px', textAlign: 'center', margin: '20px' , position: 'absolute', left: '350px', marginTop: '150px'}}>
       {statusText}

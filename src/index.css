@@ -145,33 +145,3 @@ body {
 .toggle-btn.toggled::after {
   display: block; /* Mostrar solo cuando está toggled */
 }
-
-
-
-@keyframes star-spin {
-  from {
-    transform: translateX(-50%) translateY(-50%) scale(0.5) rotate(0deg);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-50%) translateY(-50%) scale(1.5) rotate(360deg);
-    opacity: 1;
-  }
-}
-
-.star {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background-image: url('C:\Users\Usuario\Documents\Logica\Nonograma\pngtree-neon-you-win-game-png-image_2966654.jpg'); /* Asegúrate de poner la ruta correcta de la imagen de estrella */
-  background-size: cover;
-  top: 50%;
-  left: 50%;
-  animation: star-spin 1s ease-in-out infinite;
-  /* Inicia oculto */
-}
-.star.show {
-  display: block; /* Mostrar cuando se está cargando */
-}
-
-
