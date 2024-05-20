@@ -76,8 +76,7 @@ checkClues(ClueList, GridList, Satisfied) :-
 % addElement(+Element, +List, -Result)
 %
 % Adds an element to the beginning of a list
-addElement(X,[],R)   :- 
-    R = [X].
+addElement(X,[],[X]).
 addElement(X,[Head|Tail],R):- 
     R = [X,Head|Tail].
 
@@ -87,8 +86,7 @@ addElement(X,[Head|Tail],R):-
 % getValuesFromColumn(+GridList, +ColumnIndex, -ColumnValues)
 %
 % Extracts the values from a specific column in a grid represented as a list of lists.
-getValuesFromColumn([],_Pos,List)  :- 
-    List = [].
+getValuesFromColumn([],_Pos,[]).
 getValuesFromColumn([H|T],Pos,List):- 
     nth0(Pos,H,Element),
     getValuesFromColumn(T,Pos,ListAux),

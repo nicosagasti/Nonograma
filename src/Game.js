@@ -45,6 +45,7 @@ function Game() {
         setCompletedColumnsClues(initialCompletedColumnsClues);
 
         initializeClues(response['Grid'], response['RowClues'], response['ColumClues']);
+        gameWon(completedRowsClues,completedColumnsClues);
       }
     });
   }
@@ -195,7 +196,7 @@ function Game() {
           <div className="thumb"></div>
         </button>
       </div>
-      <div style={{ fontSize: '30px', textAlign: 'center', margin: '20px' , position: 'absolute', left: '350px', marginTop: '150px'}}>
+      <div style={{ fontSize: '30px', textAlign: 'center', margin: '5px' , position: 'relative', left: '5px', marginTop: '150px'}}>
       {statusText}
     </div>
   </div>
