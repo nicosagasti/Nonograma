@@ -45,7 +45,8 @@ function Game() {
         setCompletedColumnsClues(initialCompletedColumnsClues);
 
         initializeClues(response['Grid'], response['RowClues'], response['ColumClues']);
-        gameWon(completedRowsClues,completedColumnsClues);
+        //gameWon(completedRowsClues,completedColumnsClues);
+       
       }
     });
   }
@@ -55,7 +56,7 @@ function Game() {
     let colsLength = ColumnClues.length;
     let diagonalLength = Math.min(rowsLength, colsLength);
 
-    const squaresS = JSON.stringify(Grid).replaceAll('""', '');
+    const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
     const rowCluesS = JSON.stringify(RowClues);
     const colCluesS = JSON.stringify(ColumnClues);
 
@@ -76,6 +77,8 @@ function Game() {
 
           setCompletedRowsClues([...rowAux]);
           setCompletedColumnsClues([...colAux]);
+
+          gameWon([...rowAux],[...colAux]);
         }
         setWaiting(false);
       });
@@ -87,14 +90,18 @@ function Game() {
       for (let i = diagonalLength; i < rowsLength; i++) {
         for (let j = 0; j < colsLength; j++) {
           const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
+          
           setWaiting(true);
 
           pengine.query(queryA, (success, response) => {
             if (success) {
               rowAux[i] = response['RowSat'];
               colAux[j] = response['ColSat'];
+
               setCompletedRowsClues([...rowAux]);
               setCompletedColumnsClues([...colAux]);
+
+              gameWon([...rowAux],[...colAux]);
             }
             setWaiting(false);
           });
@@ -111,14 +118,19 @@ function Game() {
             if (success) {
               rowAux[i] = response['RowSat'];
               colAux[j] = response['ColSat'];
+
               setCompletedRowsClues([...rowAux]);
               setCompletedColumnsClues([...colAux]);
+
+              gameWon([...rowAux],[...colAux]);
             }
             setWaiting(false);
           });
         }
       }
     }
+    console.log(completedColumnsClues);
+    console.log(completedRowsClues);
   }
 
   function gameWon(completedRows, completedCols) {
