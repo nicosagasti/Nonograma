@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
@@ -28,7 +28,7 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
-
+    setWaiting(true);
     // Recibe la instancia de Prolog y utiliza la consulta init(RowsClues, ColsClues, Grid) para obtener las pistas de filas y columnas del tablero del juego
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -44,11 +44,28 @@ function Game() {
         const initialCompletedColumnsClues = Array(response['ColumClues'].length).fill(0);
         setCompletedColumnsClues(initialCompletedColumnsClues);
 
-        initializeClues(response['Grid'], response['RowClues'], response['ColumClues']);
-        //gameWon(completedRowsClues,completedColumnsClues);
-       
+        //initializeClues(response['Grid'], response['RowClues'], response['ColumClues']); //Analizar despues que hacer
+        /* intializeClues estaria despues de conseguir la grilla resuelta, comparamos la grilla actual con la completa y obtenemos las pistas completas */
+
       }
+      setWaiting(false);
     });
+    if(!waiting){ //Forma de esperar a las consultas prolog
+    console.log("Grilla resuelta");
+    const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
+    const rowCluesS = JSON.stringify(rowsClues);
+    const colCluesS = JSON.stringify(colsClues);
+    const numFilas = JSON.stringify(4);
+    const numCols = JSON.stringify(4);
+
+    const queryA =
+      `resolverGrilla(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
+      pengine.query(queryA, (success, response) => {
+        if (success) {
+        console.log("Grilla entro");
+          console.log(response['GrillaResueltaAux']);
+      }
+    });}
   }
 
   function initializeClues(Grid, RowClues, ColumnClues) {
@@ -78,7 +95,7 @@ function Game() {
           setCompletedRowsClues([...rowAux]);
           setCompletedColumnsClues([...colAux]);
 
-          gameWon([...rowAux],[...colAux]);
+          gameWon([...rowAux], [...colAux]);
         }
         setWaiting(false);
       });
@@ -90,7 +107,7 @@ function Game() {
       for (let i = diagonalLength; i < rowsLength; i++) {
         for (let j = 0; j < colsLength; j++) {
           const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-          
+
           setWaiting(true);
 
           pengine.query(queryA, (success, response) => {
@@ -101,13 +118,13 @@ function Game() {
               setCompletedRowsClues([...rowAux]);
               setCompletedColumnsClues([...colAux]);
 
-              gameWon([...rowAux],[...colAux]);
+              gameWon([...rowAux], [...colAux]);
             }
             setWaiting(false);
           });
         }
       }
-    } else if (rowsLength < colsLength) { 
+    } else if (rowsLength < colsLength) {
       // Iterar sobre las columnas restantes
       for (let j = diagonalLength; j < colsLength; j++) {
         for (let i = 0; i < rowsLength; i++) {
@@ -122,15 +139,13 @@ function Game() {
               setCompletedRowsClues([...rowAux]);
               setCompletedColumnsClues([...colAux]);
 
-              gameWon([...rowAux],[...colAux]);
+              gameWon([...rowAux], [...colAux]);
             }
             setWaiting(false);
           });
         }
       }
     }
-    console.log(completedColumnsClues);
-    console.log(completedRowsClues);
   }
 
   function gameWon(completedRows, completedCols) {
@@ -208,10 +223,10 @@ function Game() {
           <div className="thumb"></div>
         </button>
       </div>
-      <div style={{ fontSize: '30px', textAlign: 'center', margin: '5px' , position: 'relative', left: '5px', marginTop: '150px'}}>
-      {statusText}
+      <div style={{ fontSize: '30px', textAlign: 'center', margin: '5px', position: 'relative', left: '5px', marginTop: '150px' }}>
+        {statusText}
+      </div>
     </div>
-  </div>
   );
 
 }
