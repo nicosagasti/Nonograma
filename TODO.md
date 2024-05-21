@@ -8,6 +8,10 @@ TODO list:
 [*] Ver como funciona el codigo para matrices no cuadradas
 [] gameWon al inicializar la grilla
 
+[] comparar grillas: 
+    en prolog o react?
+
 # Prolog
 [*] documentar Prolog
 [*] revisar casos bases put/8
+[] mejorar legibilidad de prolog 

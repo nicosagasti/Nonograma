@@ -8,8 +8,11 @@ function Game() {
 
   // State
   const [grid, setGrid] = useState(null);
+  const [solvedGrid, setSolvedGrid] = useState(null);
+
   const [rowsClues, setRowsClues] = useState(null);
   const [colsClues, setColsClues] = useState(null);
+
   const [waiting, setWaiting] = useState(false);
   const [toggleChecked, setToggleChecked] = useState(false);
 
@@ -47,25 +50,39 @@ function Game() {
         //initializeClues(response['Grid'], response['RowClues'], response['ColumClues']); //Analizar despues que hacer
         /* intializeClues estaria despues de conseguir la grilla resuelta, comparamos la grilla actual con la completa y obtenemos las pistas completas */
 
+        console.log("Grilla resuelta");
+        const squaresS = JSON.stringify(response['Grid']).replaceAll('"_"', '_');
+        const rowCluesS = JSON.stringify(response['RowClues']);
+        const colCluesS = JSON.stringify(response['ColumClues']);
+        const numFilas = JSON.stringify(4);
+        const numCols = JSON.stringify(4);
+
+        const queryA =
+          `resolverGrilla(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
+        pengine.query(queryA, (success, response) => {
+          if (success) {
+            console.log("Grilla entro");
+            console.log(response['GrillaResueltaAux']);
+            setSolvedGrid(response['GrillaResueltaAux']);
+          }
+        });
+
+        checkInitialGrid(response['Grid'], response['GrillaResueltaAux']);
+
       }
       setWaiting(false);
     });
-    if(!waiting){ //Forma de esperar a las consultas prolog
-    console.log("Grilla resuelta");
-    const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
-    const rowCluesS = JSON.stringify(rowsClues);
-    const colCluesS = JSON.stringify(colsClues);
-    const numFilas = JSON.stringify(4);
-    const numCols = JSON.stringify(4);
+  }
 
-    const queryA =
-      `resolverGrilla(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
-      pengine.query(queryA, (success, response) => {
-        if (success) {
-        console.log("Grilla entro");
-          console.log(response['GrillaResueltaAux']);
-      }
-    });}
+  function checkInitialGrid(ActualGrid, SolvedGrid){
+    //vamos a comparar la grilla actual y la grilla resuelta
+    let rowsLength = rowsClues.length;
+    let colsLength = colsClues.length;
+    console.log(rowsLength);
+    let rowAux = new Array(rowsLength).fill(0);
+    let colAux = new Array(colsLength).fill(0);
+
+    //TODO: metodo prolog o react?
   }
 
   function initializeClues(Grid, RowClues, ColumnClues) {
