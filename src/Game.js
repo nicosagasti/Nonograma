@@ -58,7 +58,7 @@ function Game() {
         const numCols = JSON.stringify(4);
 
         const queryA =
-          `resolverGrilla(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
+          `solveGrid(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
         pengine.query(queryA, (success, response) => {
           if (success) {
             console.log("Grilla entro");
