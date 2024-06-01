@@ -9,12 +9,17 @@ function Game() {
   // State
   const [grid, setGrid] = useState(null);
   const [solvedGrid, setSolvedGrid] = useState(null);
+  const [originalGrid, setOriginalGrid] = useState([]);
 
   const [rowsClues, setRowsClues] = useState(null);
   const [colsClues, setColsClues] = useState(null);
 
   const [waiting, setWaiting] = useState(false);
   const [toggleChecked, setToggleChecked] = useState(false);
+
+  const [showHintMode, setShowHintMode] = useState(false);
+
+  const [showSolvedGridMode, setShowSolvedGridMode] = useState(false);
 
   const [completedColumnsClues, setCompletedColumnsClues] = useState([]);
   const [completedRowsClues, setCompletedRowsClues] = useState([]);
@@ -62,107 +67,27 @@ function Game() {
         pengine.query(queryA, (success, response) => {
           if (success) {
             console.log("Grilla entro");
-            console.log(response['GrillaResueltaAux']);
             setSolvedGrid(response['GrillaResueltaAux']);
           }
         });
 
-        checkInitialGrid(response['Grid'], response['GrillaResueltaAux']);
+        checkInitialGrid(response['Grid'], response['GrillaResueltaAux'], response['RowClues'], response['ColumClues']);
 
       }
       setWaiting(false);
     });
+
   }
 
-  function checkInitialGrid(ActualGrid, SolvedGrid){
+  function checkInitialGrid(ActualGrid, SolvedGrid, RowsClues, ColsClues) {
     //vamos a comparar la grilla actual y la grilla resuelta
-    let rowsLength = rowsClues.length;
-    let colsLength = colsClues.length;
-    console.log(rowsLength);
+    let rowsLength = RowsClues.length;
+    let colsLength = ColsClues.length;
+
     let rowAux = new Array(rowsLength).fill(0);
     let colAux = new Array(colsLength).fill(0);
 
     //TODO: metodo prolog o react?
-  }
-
-  function initializeClues(Grid, RowClues, ColumnClues) {
-    let rowsLength = RowClues.length;
-    let colsLength = ColumnClues.length;
-    let diagonalLength = Math.min(rowsLength, colsLength);
-
-    const squaresS = JSON.stringify(Grid).replaceAll('"_"', '_');
-    const rowCluesS = JSON.stringify(RowClues);
-    const colCluesS = JSON.stringify(ColumnClues);
-
-    let rowAux = new Array(rowsLength).fill(0);
-    let colAux = new Array(colsLength).fill(0);
-
-    // Vamos a verificar si existe alguna pista que se satisface antes de iniciar el juego.
-
-    // Recorrer la diagonal de la matriz cuadrada
-    for (let i = 0; i < diagonalLength; i++) {
-      const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${i}], RowSat, ColSat)`;
-
-      setWaiting(true);
-      pengine.query(queryA, (succes, response) => {
-        if (succes) {
-          rowAux[i] = response['RowSat'];
-          colAux[i] = response['ColSat'];
-
-          setCompletedRowsClues([...rowAux]);
-          setCompletedColumnsClues([...colAux]);
-
-          gameWon([...rowAux], [...colAux]);
-        }
-        setWaiting(false);
-      });
-    }
-
-    // Continuar recorriendo el resto de la matriz
-    if (rowsLength > colsLength) {
-      // Iterar sobre las filas restantes
-      for (let i = diagonalLength; i < rowsLength; i++) {
-        for (let j = 0; j < colsLength; j++) {
-          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-
-          setWaiting(true);
-
-          pengine.query(queryA, (success, response) => {
-            if (success) {
-              rowAux[i] = response['RowSat'];
-              colAux[j] = response['ColSat'];
-
-              setCompletedRowsClues([...rowAux]);
-              setCompletedColumnsClues([...colAux]);
-
-              gameWon([...rowAux], [...colAux]);
-            }
-            setWaiting(false);
-          });
-        }
-      }
-    } else if (rowsLength < colsLength) {
-      // Iterar sobre las columnas restantes
-      for (let j = diagonalLength; j < colsLength; j++) {
-        for (let i = 0; i < rowsLength; i++) {
-          const queryA = `checkGrid(${squaresS}, ${rowCluesS}, ${colCluesS}, [${i}, ${j}], RowSat, ColSat)`;
-          setWaiting(true);
-
-          pengine.query(queryA, (success, response) => {
-            if (success) {
-              rowAux[i] = response['RowSat'];
-              colAux[j] = response['ColSat'];
-
-              setCompletedRowsClues([...rowAux]);
-              setCompletedColumnsClues([...colAux]);
-
-              gameWon([...rowAux], [...colAux]);
-            }
-            setWaiting(false);
-          });
-        }
-      }
-    }
   }
 
   function gameWon(completedRows, completedCols) {
@@ -181,9 +106,25 @@ function Game() {
 
   function handleClick(i, j) {
     // No action on click if we are waiting.
-    if (waiting || gameWonStatus) {
+    if (waiting || gameWonStatus || showSolvedGridMode) {
       return;
     }
+
+    if (showHintMode) {
+      if (grid[i][j] == null) {
+        const hintValue = solvedGrid[i][j];
+
+        // Actualizamos la grilla con el valor de pista
+        const newGrid = [...grid];
+        newGrid[i][j] = hintValue;
+        setGrid(newGrid);
+
+      }
+      // Desactivamos el modo de pistas
+      setShowHintMode(false);
+      return;
+    }
+
 
     const content = toggleChecked ? "#" : "X";
 
@@ -217,6 +158,31 @@ function Game() {
 
   }
 
+  function handleShowHint() {
+    setShowHintMode(true);
+  }
+
+  function handleSolvedGrid() {
+    if (showSolvedGridMode) {
+      console.log(originalGrid + "false");
+      // Si el modo de mostrar la grilla resuelta está activado, ocultamos la grilla resuelta
+      setGrid(originalGrid); // Volvemos a la grilla original
+    } else {
+      // Si el modo de mostrar la grilla resuelta está desactivado, mostramos la grilla resuelta
+      const gridCopy = grid.map(row => [...row]); // Hacer una copia profunda de la grilla actual
+      setOriginalGrid(gridCopy);
+      const newGrid = [...grid];
+
+      for (let i = 0; i < rowsClues.length; i++) {
+        for (let j = 0; j < colsClues.length; j++) {
+          newGrid[i][j] = solvedGrid[i][j];
+        }
+      }
+      setGrid(newGrid); // Establecemos la grilla resuelta
+    }
+    setShowSolvedGridMode(!showSolvedGridMode);
+  }
+
   if (!grid) {
     return null;
   }
@@ -239,6 +205,8 @@ function Game() {
           onClick={() => setToggleChecked(!toggleChecked)}>
           <div className="thumb"></div>
         </button>
+        <button className="hint-button" onClick={handleShowHint}>Show Hint</button>
+        <button className="solve-button" onClick={() => { handleSolvedGrid() }}></button>
       </div>
       <div style={{ fontSize: '30px', textAlign: 'center', margin: '5px', position: 'relative', left: '5px', marginTop: '150px' }}>
         {statusText}

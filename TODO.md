@@ -1,4 +1,6 @@
 TODO list:
+[] Si hay pistas ya pintadas y ponemos el solve grid. esas pistas se deben despintar, pintar todoas o dejarlas asi?
+
 
 # React - CSS
 [ ] Mejorar CSS ?
