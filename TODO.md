@@ -13,6 +13,8 @@ TODO list:
 [] comparar grillas: 
     en prolog o react?
 
+[] OBTENER NUMFILAS EN CHECKINITIAL GRID
+
 # Prolog
 [*] documentar Prolog
 [*] revisar casos bases put/8

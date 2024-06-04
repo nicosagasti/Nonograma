@@ -323,3 +323,41 @@ longitud([],R):-
 longitud([_H|T],R):- 
 	longitud(T,Raux), 
 	R is Raux + 1.
+
+
+% Predicado principal
+compareGrid(Grid, SolvedGrid, RowsClues, ColumnsClues) :-
+    compareRows(Grid, SolvedGrid, RowsClues),
+    transpose(Grid, TransposedGrid),
+    transpose(SolvedGrid, TransposedSolvedGrid),
+    compareRows(TransposedGrid, TransposedSolvedGrid, ColumnsClues).
+
+% Comparar filas
+compareRows([], [], []).
+compareRows([Row1|Rest1], [Row2|Rest2], [Clue|CluesRest]) :-
+    (rows_equal(Row1, Row2) -> Clue = 1 ; Clue = 0),
+    compareRows(Rest1, Rest2, CluesRest).
+
+% Comparar dos filas considerando "X" y "_" como equivalentes
+rows_equal([], []).
+rows_equal([H1|T1], [H2|T2]) :-
+    equal_cells(H1, H2),
+    rows_equal(T1, T2).
+
+% Comparar dos celdas considerando "X" y "_" como equivalentes
+equal_cells(X, Y):- X == "#", Y =="#", !.
+equal_cells(X, Y) :- X \== "#", Y\=="#".
+
+% Transponer una matriz
+transpose([], []).
+transpose([F|Fs], Ts) :-
+    transpose(F, [F|Fs], Ts).
+
+transpose([], _, []).
+transpose([_|Rs], Ms, [Ts|Tss]) :-
+    lists_firsts_rests(Ms, Ts, Ms1),
+    transpose(Rs, Ms1, Tss).
+
+lists_firsts_rests([], [], []).
+lists_firsts_rests([[F|Os]|Rest], [F|Fs], [Os|Oss]) :-
+    lists_firsts_rests(Rest, Fs, Oss).
