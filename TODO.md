@@ -8,14 +8,14 @@ TODO list:
 [*] Informe => Crear un informe de los errores
 [*] Revisión del código (eliminar console.log y comentarios innecesarios)
 [*] Ver como funciona el codigo para matrices no cuadradas
-[] gameWon al inicializar la grilla
+[*] gameWon al inicializar la grilla
 
-[] comparar grillas: 
+[*] comparar grillas: 
     en prolog o react?
 
-[] OBTENER NUMFILAS EN CHECKINITIAL GRID
+[*] OBTENER NUMFILAS EN CHECKINITIAL GRID
 
 # Prolog
-[*] documentar Prolog
+[] documentar Prolog
 [*] revisar casos bases put/8
 [] mejorar legibilidad de prolog 
