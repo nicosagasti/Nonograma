@@ -54,8 +54,6 @@ function Game() {
           response["ColumClues"].length
         ).fill(0);
         setCompletedColumnsClues(initialCompletedColumnsClues);
-
-        console.log("Grilla a resolver: ");
         const squaresS = JSON.stringify(response["Grid"]).replaceAll(
           '"_"',
           "_"
@@ -63,35 +61,26 @@ function Game() {
 
         const rowCluesS = JSON.stringify(response["RowClues"]);
         const colCluesS = JSON.stringify(response["ColumClues"]);
-        const numFilas = JSON.stringify(4); //TODO!!! (es fila menos 1)
-        const numCols = JSON.stringify(4);
+
+        const numFilas = JSON.stringify(response["RowClues"].length - 1); 
+        const numCols = JSON.stringify(response["ColumClues"].length - 1);
 
         //Hacemos la query para conseguir la grilla resuelta
         const queryA = `solveGrid(${rowCluesS}, ${colCluesS}, ${squaresS}, GrillaResueltaAux, ${numFilas}, ${numCols})`;
         pengine.query(queryA, (success, response) => {
           if (success) {
-            console.log("Grilla resolvio");
             setSolvedGrid(response["GrillaResueltaAux"]);
 
-            console.log(response["GrillaResueltaAux"]);
+            //Hacemos la query para veirficar que pistas se encuentran resueltas
             const solvedGridAux = JSON.stringify(response["GrillaResueltaAux"]);
-
             const queryB = `compareGrid(${squaresS}, ${solvedGridAux}, RowsClues, ColumnsClues)`;
             pengine.query(queryB, (succes, response) => {
               if (succes) {
-                // rowAux = response["RowsCluesA"];
-                // colAux = response["ColumnsCluesA"];
-
-                console.log("hubo succes en comparegrid");
-                console.log(response["RowsClues"]);
-                console.log(response["ColumnsClues"]);
-
                 setCompletedRowsClues(response["RowsClues"]);
                 setCompletedColumnsClues(response["ColumnsClues"]);
 
+                //Vericamos si el juego ya esta ganado
                 gameWon(response["RowsClues"], response["ColumnsClues"]);
-              } else {
-                console.log("no hubo succes en comparegrid");
               }
               setWaiting(false);
             });
@@ -172,7 +161,6 @@ function Game() {
 
   function handleSolvedGrid() {
     if (showSolvedGridMode) {
-      console.log(originalGrid + "false");
       // Si el modo de mostrar la grilla resuelta está activado, ocultamos la grilla resuelta
       setGrid(originalGrid); // Volvemos a la grilla original
     } else {
