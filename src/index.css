@@ -146,7 +146,7 @@ body {
   display: block; /* Mostrar solo cuando está toggled */
 }
 
-.solve-button {
+.solve-button{
   background-color: #b7b9ba;
   border: 1px solid #aaa;
   border-radius: 99px;
@@ -159,7 +159,6 @@ body {
   left: 60px;
   margin-top: 210px; /* Espacio por encima */
   margin-bottom: 20px;
-  
 }
 
 .solve-button .thumb {
@@ -175,66 +174,42 @@ body {
   transform: translateY(-50%);
 }
 
-.solve-button.toggled {
-  background-color: #15b58e;
+.solve-button.toggled{
+  background-color: salmon;
 }
 
-.solve-button:hover {
+.solve-button:hover{
   border-color: #6f6f6f;
 }
 
-.solve-button.toggled .thumb {
+.solve-button.toggled .thumb{
   left: calc(50px - 5px);
 }
 
-.solve-button.toggled::after {
-  content: "\25A0"; /* Código Unicode para un cuadrado */
+.solve-button.toggled::after{
+  content: "✨"; /* Código Unicode para un cuadrado */
   display: none;
   width: 18px;
   height: 18px;
-  background-color: #080808;
+  background-color: salmon;
   position: absolute;
   right: 50px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.solve-button:not(.toggled)::before {
-  content: "X";
-  display: block; 
+.solve-button:not(.toggled)::before{ 
+  content: " ";
+  display: block;
   position: absolute;
-  top: 50%; 
-  transform: translateY(-50%); 
+  top: 50%;
+  transform: translateY(-50%);
   right: 13px;
-  font-size: 24px; /* Ajusta el tamaño de la fuente */
-  line-height: 24px; /* Asegura que la línea tenga el mismo alto que la fuente para centrar mejor */
+  font-size: 24px;
+  line-height: 24px;
   font-weight: bold;
 }
 
-.solve-button.toggled::after {
-  display: block; /* Mostrar solo cuando está toggled */
+.solve-button.toggled::after{
+  display: block;
 }
-
-/* styles.css */
-/*
-.solve-button {
-  background-color: green;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.solve-button.toggled {
-  background-color: red; 
-}
-
-.solve-button:hover {
-  background-color: darkgreen; 
-}
-
-.solve-button.toggled:hover {
-  background-color: darkred; 
-}*/

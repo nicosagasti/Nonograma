@@ -72,7 +72,7 @@ function Game() {
           if (success) {
             setSolvedGrid(response["GrillaResueltaAux"]);
 
-            //Hacemos la query para veirficar que pistas se encuentran resueltas
+            //Hacemos la query para verificar que pistas se encuentran resueltas
             const solvedGridAux = JSON.stringify(response["GrillaResueltaAux"]);
             const queryB = `compareGrid(${squaresS}, ${solvedGridAux}, RowsClues, ColumnsClues, ${numCols})`;
             pengine.query(queryB, (succes, response) => {
@@ -114,7 +114,7 @@ function Game() {
     }
 
     if (showHintMode) {
-      if (grid[i][j] == null) {
+      if (grid[i][j] === "_") {
         const hintValue = solvedGrid[i][j];
 
         // Actualizamos la grilla con el valor de pista
@@ -190,7 +190,6 @@ function Game() {
   }
 
   const statusText = gameWonStatus ? "You´ve Won!" : "Keep playing!";
-
   return (
     <div className="game">
       <Board
@@ -213,10 +212,10 @@ function Game() {
           Show Hint
         </button>
         <button
-          className={`solve-button ${!isSolvedStatus ? "toggled" : ""}`}
+          className={`solve-button ${!isSolvedStatus ? "" : "toggled"}`}
           onClick={handleSolvedGrid}
         >
-
+          <div className="thumb"></div>
         </button>
       </div>
       <div
