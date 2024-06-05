@@ -185,7 +185,7 @@ listarCol([],_Pos,Lista)  :-
 listarCol([H|T],Pos,Lista):- 
 	nth0(Pos,H,Elemento),
     listarCol(T,Pos,ListaAux),
-    add(Elemento,ListaAux,Lista).
+    addElement(Elemento,ListaAux,Lista).
 
 generateClue([],N,Pista,Resto):- 
 	Resto = [],Pista = [N].
@@ -203,12 +203,7 @@ generateCluesList(Fila,ListaPista):-
 	Fila \==[], generateClue(Fila,0,Pista,Resto),
 	generateCluesList(Resto,ListaAux),
     Pista = [H], 
-	(H \== 0, add(H,ListaAux,ListaPista);ListaPista = ListaAux).
-
-add(X,[],R):- 
-	R = [X].
-add(X,[H|T],R):- 
-	R = [X,H|T].
+	(H \== 0, addElement(H,ListaAux,ListaPista);ListaPista = ListaAux).
 
 addAtEnd(X,[],R):- 
 	R = [X].
@@ -324,12 +319,13 @@ longitud([_H|T],R):-
 	longitud(T,Raux), 
 	R is Raux + 1.
 
-
+% Metodo utilizado para inicializar pistas: %
 % Predicado principal
-compareGrid(Grid, SolvedGrid, RowsClues, ColumnsClues) :-
+compareGrid(Grid, SolvedGrid, RowsClues, ColumnsClues, CantCol) :-
     compareRows(Grid, SolvedGrid, RowsClues),
-    transpose(Grid, TransposedGrid),
-    transpose(SolvedGrid, TransposedSolvedGrid),
+    PosMax is CantCol - 1,
+    transposed(Grid, TransposedGrid, PosMax),
+    transposed(SolvedGrid, TransposedSolvedGrid, PosMax),
     compareRows(TransposedGrid, TransposedSolvedGrid, ColumnsClues).
 
 % Comparar filas
@@ -347,17 +343,3 @@ rows_equal([H1|T1], [H2|T2]) :-
 % Comparar dos celdas considerando "X" y "_" como equivalentes
 equal_cells(X, Y):- X == "#", Y =="#", !.
 equal_cells(X, Y) :- X \== "#", Y\=="#".
-
-% Transponer una matriz
-transpose([], []).
-transpose([F|Fs], Ts) :-
-    transpose(F, [F|Fs], Ts).
-
-transpose([], _, []).
-transpose([_|Rs], Ms, [Ts|Tss]) :-
-    lists_firsts_rests(Ms, Ts, Ms1),
-    transpose(Rs, Ms1, Tss).
-
-lists_firsts_rests([], [], []).
-lists_firsts_rests([[F|Os]|Rest], [F|Fs], [Os|Oss]) :-
-    lists_firsts_rests(Rest, Fs, Oss).

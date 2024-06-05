@@ -62,7 +62,7 @@ function Game() {
         const rowCluesS = JSON.stringify(response["RowClues"]);
         const colCluesS = JSON.stringify(response["ColumClues"]);
 
-        const numFilas = JSON.stringify(response["RowClues"].length - 1); 
+        const numFilas = JSON.stringify(response["RowClues"].length - 1);
         const numCols = JSON.stringify(response["ColumClues"].length - 1);
 
         //Hacemos la query para conseguir la grilla resuelta
@@ -73,7 +73,7 @@ function Game() {
 
             //Hacemos la query para veirficar que pistas se encuentran resueltas
             const solvedGridAux = JSON.stringify(response["GrillaResueltaAux"]);
-            const queryB = `compareGrid(${squaresS}, ${solvedGridAux}, RowsClues, ColumnsClues)`;
+            const queryB = `compareGrid(${squaresS}, ${solvedGridAux}, RowsClues, ColumnsClues, ${numCols})`;
             pengine.query(queryB, (succes, response) => {
               if (succes) {
                 setCompletedRowsClues(response["RowsClues"]);
@@ -84,7 +84,7 @@ function Game() {
               }
               setWaiting(false);
             });
-          } 
+          }
           setWaiting(false);
         });
       }
@@ -156,27 +156,31 @@ function Game() {
   }
 
   function handleShowHint() {
-    setShowHintMode(true);
+    if (!gameWonStatus) {
+      setShowHintMode(true);
+    }
   }
 
   function handleSolvedGrid() {
-    if (showSolvedGridMode) {
-      // Si el modo de mostrar la grilla resuelta está activado, ocultamos la grilla resuelta
-      setGrid(originalGrid); // Volvemos a la grilla original
-    } else {
-      // Si el modo de mostrar la grilla resuelta está desactivado, mostramos la grilla resuelta
-      const gridCopy = grid.map((row) => [...row]); // Hacer una copia profunda de la grilla actual
-      setOriginalGrid(gridCopy);
-      const newGrid = [...grid];
+    if (!gameWonStatus) {
+      if (showSolvedGridMode) {
+        // Si el modo de mostrar la grilla resuelta está activado, ocultamos la grilla resuelta
+        setGrid(originalGrid); // Volvemos a la grilla original
+      } else {
+        // Si el modo de mostrar la grilla resuelta está desactivado, mostramos la grilla resuelta
+        const gridCopy = grid.map((row) => [...row]); // Hacer una copia profunda de la grilla actual
+        setOriginalGrid(gridCopy);
+        const newGrid = [...grid];
 
-      for (let i = 0; i < rowsClues.length; i++) {
-        for (let j = 0; j < colsClues.length; j++) {
-          newGrid[i][j] = solvedGrid[i][j];
+        for (let i = 0; i < rowsClues.length; i++) {
+          for (let j = 0; j < colsClues.length; j++) {
+            newGrid[i][j] = solvedGrid[i][j];
+          }
         }
+        setGrid(newGrid); // Establecemos la grilla resuelta
       }
-      setGrid(newGrid); // Establecemos la grilla resuelta
+      setShowSolvedGridMode(!showSolvedGridMode);
     }
-    setShowSolvedGridMode(!showSolvedGridMode);
   }
 
   if (!grid) {
