@@ -1,4 +1,7 @@
 {
     "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 5000
+    "files.autoSaveDelay": 5000,
+    "prolog.linter.run": "never",
+    "window.autoDetectColorScheme": false,
+    "workbench.colorTheme": "One Dark Pro Darker"
 }
