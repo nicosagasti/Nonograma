@@ -187,7 +187,7 @@ body {
 }
 
 .solve-button.toggled::after{
-  content: "✨"; /* Código Unicode para un cuadrado */
+  content: "✨"; 
   display: none;
   width: 18px;
   height: 18px;
@@ -199,7 +199,7 @@ body {
 }
 
 .solve-button:not(.toggled)::before{ 
-  content: " ";
+  /* content */
   display: block;
   position: absolute;
   top: 50%;
@@ -212,4 +212,24 @@ body {
 
 .solve-button.toggled::after{
   display: block;
+}
+
+.hint-button {
+  background-color: #b7b9ba;
+  border: 1px solid #aaa;
+  border-radius: 50%; /* Asegura que sea un círculo */
+  width: 40px;
+  height: 40px; /* Misma altura y anchura para hacer un círculo */
+  transition: background-color 0.1s ease, border-color 0.2s ease;
+  cursor: pointer;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
+  margin-top: 210px; /* Espacio por encima */
+  margin-bottom: 20px;
+  position: relative;
+  left: 60px;
+  content: "💡";
+}
+
+.hint-button:hover {
+  border-color: #6f6f6f;
 }

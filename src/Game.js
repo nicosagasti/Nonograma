@@ -131,7 +131,6 @@ function Game() {
 
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.
     const squaresS = JSON.stringify(grid).replaceAll('"_"', "_");
-
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
 
@@ -156,9 +155,8 @@ function Game() {
   }
 
   function handleShowHint() {
-    if (!gameWonStatus) {
+    if (!gameWonStatus)
       setShowHintMode(true);
-    }
   }
 
   function handleSolvedGrid() {
@@ -178,7 +176,7 @@ function Game() {
           for (let j = 0; j < colsClues.length; j++) {
             newGrid[i][j] = solvedGrid[i][j];
           }
-        } 
+        }
         setGrid(newGrid); // Establecemos la grilla resuelta
       }
       setShowSolvedGridMode(!showSolvedGridMode);
@@ -208,8 +206,7 @@ function Game() {
         >
           <div className="thumb"></div>
         </button>
-        <button className="hint-button" onClick={handleShowHint}>
-          Show Hint
+        <button className="hint-button" onClick={handleShowHint}>💡
         </button>
         <button
           className={`solve-button ${!isSolvedStatus ? "" : "toggled"}`}
