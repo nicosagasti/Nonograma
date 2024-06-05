@@ -25,6 +25,8 @@ function Game() {
 
   const [gameWonStatus, setGameWonStatus] = useState(false);
 
+  const [isSolvedStatus, setIsSolvedStatus] = useState(false);
+
   useEffect(() => {
     // Creation of the pengine server instance.
     // This is executed just once, after the first render.
@@ -165,12 +167,14 @@ function Game() {
     if (!gameWonStatus) {
       if (showSolvedGridMode) {
         // Si el modo de mostrar la grilla resuelta está activado, ocultamos la grilla resuelta
-        setGrid(originalGrid); // Volvemos a la grilla original
+        setGrid(originalGrid);
+        setIsSolvedStatus(false); // Volvemos a la grilla original
       } else {
         // Si el modo de mostrar la grilla resuelta está desactivado, mostramos la grilla resuelta
         const gridCopy = grid.map((row) => [...row]); // Hacer una copia profunda de la grilla actual
         setOriginalGrid(gridCopy);
         const newGrid = [...grid];
+        setIsSolvedStatus(true);
 
         for (let i = 0; i < rowsClues.length; i++) {
           for (let j = 0; j < colsClues.length; j++) {
@@ -211,11 +215,11 @@ function Game() {
           Show Hint
         </button>
         <button
-          className="solve-button"
-          onClick={() => {
-            handleSolvedGrid();
-          }}
-        ></button>
+          className={`solve-button ${!isSolvedStatus ? "toggled" : ""}`}
+          onClick={handleSolvedGrid}
+        >
+
+        </button>
       </div>
       <div
         style={{
