@@ -206,7 +206,8 @@ function Game() {
         >
           <div className="thumb"></div>
         </button>
-        <button className="hint-button" onClick={handleShowHint}>💡
+        <button className="hint-button">
+          <span className="icon">💡</span>
         </button>
         <button
           className={`solve-button ${!isSolvedStatus ? "" : "toggled"}`}

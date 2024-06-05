@@ -88,9 +88,10 @@ body {
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
   position: relative;
   left: 60px;
-  margin-top: 210px; /* Espacio por encima */
+  margin-top: 210px;
+  /* Espacio por encima */
   margin-bottom: 20px;
-  
+
 }
 
 .toggle-btn .thumb {
@@ -119,7 +120,8 @@ body {
 }
 
 .toggle-btn.toggled::after {
-  content: "\25A0"; /* Código Unicode para un cuadrado */
+  content: "\25A0";
+  /* Código Unicode para un cuadrado */
   display: none;
   width: 18px;
   height: 18px;
@@ -132,21 +134,24 @@ body {
 
 .toggle-btn:not(.toggled)::before {
   content: "X";
-  display: block; 
+  display: block;
   position: absolute;
-  top: 50%; 
-  transform: translateY(-50%); 
+  top: 50%;
+  transform: translateY(-50%);
   right: 13px;
-  font-size: 24px; /* Ajusta el tamaño de la fuente */
-  line-height: 24px; /* Asegura que la línea tenga el mismo alto que la fuente para centrar mejor */
+  font-size: 24px;
+  /* Ajusta el tamaño de la fuente */
+  line-height: 24px;
+  /* Asegura que la línea tenga el mismo alto que la fuente para centrar mejor */
   font-weight: bold;
 }
 
 .toggle-btn.toggled::after {
-  display: block; /* Mostrar solo cuando está toggled */
+  display: block;
+  /* Mostrar solo cuando está toggled */
 }
 
-.solve-button{
+.solve-button {
   background-color: #b7b9ba;
   border: 1px solid #aaa;
   border-radius: 99px;
@@ -157,7 +162,8 @@ body {
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
   position: relative;
   left: 60px;
-  margin-top: 210px; /* Espacio por encima */
+  margin-top: 210px;
+  /* Espacio por encima */
   margin-bottom: 20px;
 }
 
@@ -174,20 +180,20 @@ body {
   transform: translateY(-50%);
 }
 
-.solve-button.toggled{
+.solve-button.toggled {
   background-color: salmon;
 }
 
-.solve-button:hover{
+.solve-button:hover {
   border-color: #6f6f6f;
 }
 
-.solve-button.toggled .thumb{
+.solve-button.toggled .thumb {
   left: calc(50px - 5px);
 }
 
-.solve-button.toggled::after{
-  content: "✨"; 
+.solve-button.toggled::after {
+  content: "✨";
   display: none;
   width: 18px;
   height: 18px;
@@ -198,7 +204,7 @@ body {
   transform: translateY(-50%);
 }
 
-.solve-button:not(.toggled)::before{ 
+.solve-button:not(.toggled)::before {
   /* content */
   display: block;
   position: absolute;
@@ -210,26 +216,30 @@ body {
   font-weight: bold;
 }
 
-.solve-button.toggled::after{
+.solve-button.toggled::after {
   display: block;
 }
 
 .hint-button {
-  background-color: #b7b9ba;
-  border: 1px solid #aaa;
-  border-radius: 50%; /* Asegura que sea un círculo */
-  width: 40px;
-  height: 40px; /* Misma altura y anchura para hacer un círculo */
-  transition: background-color 0.1s ease, border-color 0.2s ease;
-  cursor: pointer;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
-  margin-top: 210px; /* Espacio por encima */
-  margin-bottom: 20px;
   position: relative;
-  left: 60px;
-  content: "💡";
+  user-select: none;
+  padding: 0;
+  background-color: #b7b9ba;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: none;
+  font-size: 18px;
+  font-weight: 400;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: salmon;
 }
 
-.hint-button:hover {
-  border-color: #6f6f6f;
+.hint-button:active {
+  transform: scale(0.5);
 }
