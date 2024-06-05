@@ -61,7 +61,6 @@ function Game() {
 
         const rowCluesS = JSON.stringify(response["RowClues"]);
         const colCluesS = JSON.stringify(response["ColumClues"]);
-
         const numFilas = JSON.stringify(response["RowClues"].length - 1);
         const numCols = JSON.stringify(response["ColumClues"].length - 1);
 
@@ -89,6 +88,7 @@ function Game() {
         });
       }
     });
+    setWaiting(false);
   }
 
   function gameWon(completedRows, completedCols) {
@@ -145,10 +145,8 @@ function Game() {
 
         //Si se cumplen todas las pistas se gana el juego.
         gameWon(rowAux, colAux);
-
         setCompletedRowsClues(rowAux);
         setCompletedColumnsClues(colAux);
-
         setGrid(response["ResGrid"]);
       }
       setWaiting(false);
@@ -176,7 +174,7 @@ function Game() {
           for (let j = 0; j < colsClues.length; j++) {
             newGrid[i][j] = solvedGrid[i][j];
           }
-        }
+        } 
         setGrid(newGrid); // Establecemos la grilla resuelta
       }
       setShowSolvedGridMode(!showSolvedGridMode);
