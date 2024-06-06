@@ -213,7 +213,7 @@ function Game() {
           className={`button-common solve-button ${!isSolvedStatus ? "" : "toggled"}`}
           onClick={handleSolvedGrid}
         >
-          <div className="thumb thumb thumb-common"></div>
+          <div className="thumb thumb-common"></div>
         </button>
         <button className="hint-button" onClick={() => handleShowHint()}>
           <span className="icon">💡</span>
