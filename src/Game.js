@@ -109,20 +109,18 @@ function Game() {
 
   function handleClick(i, j) {
     // No action on click if we are waiting.
+
     if (waiting || gameWonStatus || showSolvedGridMode) {
       return;
     }
+    let content = toggleChecked ? "#" : "X";
 
     if (showHintMode) {
       if (grid[i][j] === "_") { //TODO Corroborar si es correcto el "_" (que pasa si el valor puesto en el bloque esta mal)
-        checkClues(solvedGrid[i][j], i, j); //Dentro de ese metodo se actualiza la grilla con el valor de solvedGrid
+        content = solvedGrid[i][j]; //Dentro del metodo se actualiza la grilla con el valor de solvedGrid
       }
-      // Desactivamos el modo de pistas
-      setShowHintMode(false);
-      return;
+      setShowHintMode(false); // Desactivamos el modo de pistas
     }
-
-    const content = toggleChecked ? "#" : "X";
     checkClues(content, i, j);
   }
 
