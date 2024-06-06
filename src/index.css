@@ -50,6 +50,7 @@ body {
 
 .horizontal {
   display: flex;
+  flex-direction: row;
 }
 
 .vertical {
@@ -57,11 +58,31 @@ body {
   flex-direction: column;
 }
 
-.rowClues,
+/* .rowClues, */
 .colClues {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  margin-left: 55px;
+  margin-bottom: 5px;
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: 50px;
+}
+
+.rowClues {
+  display: grid;
+  margin-right: 5px;
+  grid-template-rows: repeat(10, 30px);
+  grid-template-columns: 50px;
   grid-gap: 5px;
+}
+
+.rowClues .clue {
+  flex-direction: row;
+  justify-content: right;
+}
+
+.colClues .clue {
+  flex-direction: column;
+  justify-content: bottom;
 }
 
 .clue {
@@ -72,6 +93,7 @@ body {
   border-radius: 8px;
   margin: 5px;
   padding: 3px;
+  user-select: none;
 }
 
 .clue.completed {
@@ -81,17 +103,7 @@ body {
 
 .clue div {
   margin: 2px;
-  flex-shrink: 0;
-}
-
-.rowClues .clue {
-  flex-direction: row;
-  width: auto;
-}
-
-.colClues .clue {
-  flex-direction: column;
-  height: auto;
+  /* no tocar xq mejora legibilidad */
 }
 
 .statusText {
@@ -99,6 +111,7 @@ body {
   font-size: 30px;
   position: relative;
   align-self: center;
+  user-select: none;
 }
 
 .BoardGame {
