@@ -104,6 +104,9 @@ body {
   gap: 25px;
   align-items: center;
   justify-content: center;
+  position: relative;
+  margin-right: 1px;
+  margin-left: 1px;
 }
 
 .hint-button {

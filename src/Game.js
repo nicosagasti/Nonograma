@@ -114,13 +114,8 @@ function Game() {
     }
 
     if (showHintMode) {
-      if (grid[i][j] === "_") {
-        const hintValue = solvedGrid[i][j];
-
-        // Actualizamos la grilla con el valor de pista
-        const newGrid = [...grid];
-        newGrid[i][j] = hintValue;
-        setGrid(newGrid);
+      if (grid[i][j] === "_") { //TODO Corroborar si es correcto el "_" (que pasa si el valor puesto en el bloque esta mal)
+        checkClues(solvedGrid[i][j], i, j); //Dentro de ese metodo se actualiza la grilla con el valor de solvedGrid
       }
       // Desactivamos el modo de pistas
       setShowHintMode(false);
@@ -128,13 +123,17 @@ function Game() {
     }
 
     const content = toggleChecked ? "#" : "X";
+    checkClues(content, i, j);
+  }
 
+  function checkClues(content, i, j) {
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.
     const squaresS = JSON.stringify(grid).replaceAll('"_"', "_");
     const rowCluesS = JSON.stringify(rowsClues);
     const colCluesS = JSON.stringify(colsClues);
 
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
+    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
@@ -153,6 +152,7 @@ function Game() {
       setWaiting(false);
     });
   }
+
 
   function handleShowHint() {
     if (!gameWonStatus)
@@ -202,21 +202,21 @@ function Game() {
         />
       </div>
       <div className="buttons">
-        {/* {statusText} */}
+        {statusText}
         <button
           className={`button-common toggle-btn ${toggleChecked ? "toggled " : ""}`}
           onClick={() => setToggleChecked(!toggleChecked)}
         >
           <div className="thumb thumb-common"></div>
         </button>
-        <button className="hint-button" onClick={() => handleShowHint()}>
-          <span className="icon">💡</span>
-        </button>
         <button
           className={`button-common solve-button ${!isSolvedStatus ? "" : "toggled"}`}
           onClick={handleSolvedGrid}
         >
           <div className="thumb thumb thumb-common"></div>
+        </button>
+        <button className="hint-button" onClick={() => handleShowHint()}>
+          <span className="icon">💡</span>
         </button>
       </div>
     </div>
