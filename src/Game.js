@@ -217,7 +217,7 @@ function Game() {
           <span className="icon">💡</span>
         </button>
       </div>
-      <div className = "statusText">{statusText}</div>
+      <div className="statusText">{statusText}</div>
     </div>
   );
 }
