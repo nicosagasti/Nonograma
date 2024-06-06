@@ -198,7 +198,6 @@ function Game() {
           completedColumnsClues={completedColumnsClues}
           completedRowsClues={completedRowsClues}
           onClick={(i, j) => handleClick(i, j)}
-          gameWon={gameWonStatus}
         />
       </div>
       <div className="buttons">
