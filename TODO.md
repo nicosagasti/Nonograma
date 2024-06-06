@@ -5,9 +5,12 @@ TODO list:
 [] Agregar statusText a CSS!
 [] En las clues si tengo [3,3,1] se ve feito, no quedan alieneados y se escapa un tres
     -> Ver si funciona la solucion para las columnas y fila
+[] Documentar MEJOR prolycc !!!!
+
 
 [*] Cuando pongo el ultimo # de una fila con el hint mode activado, no se pinta fila
     -> ahora pasa que desaparece
+[*] En el init de 5x5 la ultima columna con pista 4 no se pinta!!
 
 
 # React - CSS

@@ -323,9 +323,8 @@ longitud([_H|T],R):-
 % Predicado principal
 compareGrid(Grid, SolvedGrid, RowsClues, ColumnsClues, CantCol) :-
     compareRows(Grid, SolvedGrid, RowsClues),
-    PosMax is CantCol - 1,
-    transposed(Grid, TransposedGrid, PosMax),
-    transposed(SolvedGrid, TransposedSolvedGrid, PosMax),
+    transposed(Grid, TransposedGrid, CantCol),
+    transposed(SolvedGrid, TransposedSolvedGrid, CantCol),
     compareRows(TransposedGrid, TransposedSolvedGrid, ColumnsClues).
 
 % Comparar filas
