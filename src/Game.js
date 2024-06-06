@@ -202,7 +202,6 @@ function Game() {
         />
       </div>
       <div className="buttons">
-        {statusText}
         <button
           className={`button-common toggle-btn ${toggleChecked ? "toggled " : ""}`}
           onClick={() => setToggleChecked(!toggleChecked)}
@@ -219,6 +218,7 @@ function Game() {
           <span className="icon">💡</span>
         </button>
       </div>
+      <div className = "statusText">{statusText}</div>
     </div>
   );
 }

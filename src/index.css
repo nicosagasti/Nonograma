@@ -69,7 +69,6 @@ body {
   justify-content: flex-end;
   align-items: center;
   background: lightgrey;
-  /* justify-content: center; */
   border-radius: 8px;
   margin: 5px;
   padding: 3px;
@@ -82,10 +81,24 @@ body {
 
 .clue div {
   margin: 2px;
+  flex-shrink: 0;
+}
+
+.rowClues .clue {
+  flex-direction: row;
+  width: auto;
 }
 
 .colClues .clue {
   flex-direction: column;
+  height: auto;
+}
+
+.statusText {
+  margin-top: 15px;
+  font-size: 30px;
+  position: relative;
+  align-self: center;
 }
 
 .BoardGame {
@@ -106,7 +119,7 @@ body {
   justify-content: center;
   position: relative;
   margin-right: auto;
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .hint-button {
