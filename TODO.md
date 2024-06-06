@@ -1,5 +1,7 @@
 TODO list:
 [] Si hay pistas ya pintadas y ponemos el solve grid. esas pistas se deben despintar, pintar todoas o dejarlas asi?
+[] Si en un cuadrado hay un X, o un # y apretamos el show hint: debemos modificar?
+    -> segun consigna no, peeero
 
 
 # React - CSS

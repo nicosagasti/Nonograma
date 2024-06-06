@@ -190,43 +190,34 @@ function Game() {
   const statusText = gameWonStatus ? "You´ve Won!" : "Keep playing!";
   return (
     <div className="game">
-      <Board
-        grid={grid}
-        rowsClues={rowsClues}
-        colsClues={colsClues}
-        completedColumnsClues={completedColumnsClues}
-        completedRowsClues={completedRowsClues}
-        onClick={(i, j) => handleClick(i, j)}
-        gameWon={gameWonStatus}
-      />
-      <div className="game-info">
+      <div className="BoardGame">
+        <Board
+          grid={grid}
+          rowsClues={rowsClues}
+          colsClues={colsClues}
+          completedColumnsClues={completedColumnsClues}
+          completedRowsClues={completedRowsClues}
+          onClick={(i, j) => handleClick(i, j)}
+          gameWon={gameWonStatus}
+        />
+      </div>
+      <div className="buttons">
+        {/* {statusText} */}
         <button
-          className={`toggle-btn ${toggleChecked ? "toggled " : ""}`}
+          className={`button-common toggle-btn ${toggleChecked ? "toggled " : ""}`}
           onClick={() => setToggleChecked(!toggleChecked)}
         >
-          <div className="thumb"></div>
+          <div className="thumb thumb-common"></div>
         </button>
-        <button className="hint-button">
+        <button className="hint-button" onClick={() => handleShowHint()}>
           <span className="icon">💡</span>
         </button>
         <button
-          className={`solve-button ${!isSolvedStatus ? "" : "toggled"}`}
+          className={`button-common solve-button ${!isSolvedStatus ? "" : "toggled"}`}
           onClick={handleSolvedGrid}
         >
-          <div className="thumb"></div>
+          <div className="thumb thumb thumb-common"></div>
         </button>
-      </div>
-      <div
-        style={{
-          fontSize: "30px",
-          textAlign: "center",
-          margin: "5px",
-          position: "relative",
-          left: "5px",
-          marginTop: "150px",
-        }}
-      >
-        {statusText}
       </div>
     </div>
   );

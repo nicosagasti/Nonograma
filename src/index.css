@@ -6,6 +6,25 @@ body {
   font-family: sans-serif;
   margin: 20px;
   padding: 0;
+
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .square {
@@ -50,6 +69,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   background: lightgrey;
+  /* justify-content: center; */
   border-radius: 8px;
   margin: 5px;
   padding: 3px;
@@ -68,156 +88,22 @@ body {
   flex-direction: column;
 }
 
-.game {
+.BoardGame {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.buttons {
   display: flex;
   flex-direction: row;
-}
-
-.game-info {
-  margin-left: 40px;
-}
-
-.toggle-btn {
-  background-color: #b7b9ba;
-  border: 1px solid #aaa;
-  border-radius: 99px;
-  width: 80px;
-  height: 40px;
-  transition: background-color 0.1s ease, border-color 0.2s ease;
-  cursor: pointer;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
-  position: relative;
-  left: 60px;
-  margin-top: 210px;
-  /* Espacio por encima */
-  margin-bottom: 20px;
-
-}
-
-.toggle-btn .thumb {
-  height: 30px;
-  width: 30px;
-  background-color: #fff;
-  border-radius: 99px;
-  transform: translateX(0);
-  transition: left 0.15s ease;
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.toggle-btn.toggled {
-  background-color: #15b58e;
-}
-
-.toggle-btn:hover {
-  border-color: #6f6f6f;
-}
-
-.toggle-btn.toggled .thumb {
-  left: calc(50px - 5px);
-}
-
-.toggle-btn.toggled::after {
-  content: "\25A0";
-  /* Código Unicode para un cuadrado */
-  display: none;
-  width: 18px;
-  height: 18px;
-  background-color: #080808;
-  position: absolute;
-  right: 50px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.toggle-btn:not(.toggled)::before {
-  content: "X";
-  display: block;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 13px;
-  font-size: 24px;
-  /* Ajusta el tamaño de la fuente */
-  line-height: 24px;
-  /* Asegura que la línea tenga el mismo alto que la fuente para centrar mejor */
-  font-weight: bold;
-}
-
-.toggle-btn.toggled::after {
-  display: block;
-  /* Mostrar solo cuando está toggled */
-}
-
-.solve-button {
-  background-color: #b7b9ba;
-  border: 1px solid #aaa;
-  border-radius: 99px;
-  width: 80px;
-  height: 40px;
-  transition: background-color 0.1s ease, border-color 0.2s ease;
-  cursor: pointer;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
-  position: relative;
-  left: 60px;
-  margin-top: 210px;
-  /* Espacio por encima */
-  margin-bottom: 20px;
-}
-
-.solve-button .thumb {
-  height: 30px;
-  width: 30px;
-  background-color: #fff;
-  border-radius: 99px;
-  transform: translateX(0);
-  transition: left 0.15s ease;
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.solve-button.toggled {
-  background-color: salmon;
-}
-
-.solve-button:hover {
-  border-color: #6f6f6f;
-}
-
-.solve-button.toggled .thumb {
-  left: calc(50px - 5px);
-}
-
-.solve-button.toggled::after {
-  content: "✨";
-  display: none;
-  width: 18px;
-  height: 18px;
-  background-color: salmon;
-  position: absolute;
-  right: 50px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.solve-button:not(.toggled)::before {
-  /* content */
-  display: block;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 13px;
-  font-size: 24px;
-  line-height: 24px;
-  font-weight: bold;
-}
-
-.solve-button.toggled::after {
-  display: block;
+  margin-top: 15px;
+  gap: 25px;
+  align-items: center;
+  justify-content: center;
 }
 
 .hint-button {
@@ -238,8 +124,99 @@ body {
   align-items: center;
   justify-content: center;
   background-color: salmon;
+  position: relative;
+  right: 80px;
+  left: 80px;
 }
 
 .hint-button:active {
   transform: scale(0.5);
+}
+
+.thumb-common {
+  height: 30px;
+  width: 30px;
+  background-color: #fff;
+  border-radius: 99px;
+  transform: translateX(0);
+  transition: left 0.15s ease;
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.button-common {
+  background-color: #b7b9ba;
+  border: 1px solid #aaa;
+  border-radius: 99px;
+  width: 80px;
+  height: 40px;
+  transition: background-color 0.1s ease, border-color 0.2s ease;
+  cursor: pointer;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.748);
+  position: relative;
+  right: 80px;
+  left: 80px;
+}
+
+.button-common.toggled::after {
+  display: none;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.button-common:hover {
+  border-color: #6f6f6f;
+}
+
+.button-common.toggled .thumb {
+  left: calc(50px - 5px);
+}
+
+.button-common:not(.toggled)::before {
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 13px;
+  font-size: 24px;
+  line-height: 24px;
+  font-weight: bold;
+}
+
+.button-common.toggled::after {
+  display: block;
+}
+
+.toggle-btn:not(.toggled)::before {
+  content: "X";
+}
+
+.toggle-btn.toggled::after {
+  /* Código Unicode para un cuadrado */
+  content: "\25A0";
+  background-color: #080808;
+}
+
+.toggle-btn.toggled {
+  background-color: #15b58e;
+}
+
+.solve-button.toggled {
+  background-color: salmon;
+}
+
+.solve-button.toggled::after {
+  content: "✨";
+  background-color: salmon;
+}
+
+.solve-button:not(.toggled)::before {
+  /* content */
+  content: "❓";
 }
