@@ -1,9 +1,11 @@
 TODO list:
-[] Si hay pistas ya pintadas y ponemos el solve grid. esas pistas se deben despintar, pintar todoas o dejarlas asi?
-[] Si en un cuadrado hay un X, o un # y apretamos el show hint: debemos modificar?
-    -> segun consigna no, peeero
+
+[] XQ NO SE PINTAN LOS CUADRADOS CUANDO GANO    
 [] En las clues si tengo [3,3,1] se ve feito, no quedan alieneados y se escapa un tres
     -> Ver si funciona la solucion para las columnas y fila
+[*] Si hay pistas ya pintadas y ponemos el solve grid. esas pistas se deben despintar, pintar todoas o dejarlas asi? => dejarlas asi
+[*] Si en un cuadrado hay un X, o un # y apretamos el show hint: debemos modificar? => dejar como enunciado
+    -> segun consigna no, peeero
 [] Documentar MEJOR prolycc !!!!
 
 
