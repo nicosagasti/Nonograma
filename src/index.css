@@ -52,7 +52,6 @@ body {
 .horizontal {
   display: flex;
   flex-direction: row;
-  /**/
 }
 
 .vertical {
@@ -60,27 +59,12 @@ body {
   flex-direction: column;
 }
 
-.rowClues {
-  display: grid;
-  margin-right: 5px;
-  grid-template-rows: repeat(5, minmax(50%, 150%));
+.rowClues,
+.colClues {
+  display: grid; 
+  grid-template-columns: repeat(5, 1fr);
   grid-gap: 5px;
 }
-
-.colClues {
-  display: grid;
-  margin-bottom: 5px;
-  grid-template-columns: repeat(5, minmax(50%, 100%));
-  grid-gap: 5px;
-}
-
-
-/* .rowClues,
-.colClues {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(50%, 300%));
-  grid-gap: 5px;
-} */
 
 .clue {
   display: flex;
@@ -104,14 +88,10 @@ body {
 
 .rowClues .clue {
   flex-direction: row;
-  width: auto;
-  margin-left: -100%;
 }
 
 .colClues .clue {
   flex-direction: column;
-  height: auto;
-  margin-top: -100%; 
 }
 
 .statusText {
@@ -252,6 +232,5 @@ body {
 }
 
 .solve-button:not(.toggled)::before {
-  /* content */
   content: "❓";
 }

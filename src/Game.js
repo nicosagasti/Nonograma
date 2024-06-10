@@ -126,7 +126,6 @@ function Game() {
     const colCluesS = JSON.stringify(colsClues);
 
     const queryS = `put("${content}", [${i},${j}], ${rowCluesS}, ${colCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
-    console.log(queryS);
     setWaiting(true);
     pengine.query(queryS, (success, response) => {
       if (success) {
