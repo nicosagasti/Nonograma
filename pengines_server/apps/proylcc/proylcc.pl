@@ -109,6 +109,7 @@ checkClues(ClueList, GridList, Satisfied) :-
 %
 % agrega un elemento al inicio de la lista
 addElement(X,[],[X]).
+
 addElement(X,[Head|Tail],R):- 
     R = [X,Head|Tail].
 
@@ -119,6 +120,7 @@ addElement(X,[Head|Tail],R):-
 %
 % obtiene los valores de una columna en la grilla representada como lista de listas
 getValuesFromColumn([],_Pos,[]).
+
 getValuesFromColumn([H|T],Pos,List):- 
     nth0(Pos,H,Element),
     getValuesFromColumn(T,Pos,ListAux),
@@ -259,7 +261,7 @@ generateCluesList(Row,ClueList):-
 %
 %addAtEnd(+Elememt, +List, -newList).
 addAtEnd(X,[],[X]).
-	%R = [X].
+
 addAtEnd(X,[H|T],R):- 
 	addAtEnd(X,T,Raux), 
 	R = [H|Raux].
