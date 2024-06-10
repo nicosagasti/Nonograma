@@ -227,7 +227,7 @@ listarCol([H|T],Pos,Lista):-
 %Caso base: 
 %se utiliza para finalizar la generación de la pista cuando no quedan más celdas por procesar.
 generateClue([],N,Clue,Rest):- 
-	Ret = [],Clue = [N].
+	Rest = [],Clue = [N].
 
 %Caso Recursivo: 
 %se utiliza para procesar cada celda de la lista, incrementando el contador cuando encuentra un "#" 
@@ -390,7 +390,7 @@ addClue(["#"|Line], LineRest, N):-
 %Genera espacios dentro la fila.
 toSpace(Line, Line).
 toSpace(["X"|Line],LineRest) :- 
-	toSpace(Line, RLineRest).
+	toSpace(Line, LineRest).
 
 %Agrega un espacio individual dentro de la fila luego de haber agregado una pista.
 addSpace(["X"|T],T).
