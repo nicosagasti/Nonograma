@@ -212,11 +212,11 @@ getPos(N,L,R):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%Lee una matriz y devuelve una columna en forma de lista.
+%Lee una grilla y devuelve una columna en forma de lista.
 %
 % listarCol(+Grid, +Pos, -List).
 listarCol([],_Pos,[]).
-	%Lista = [].  %%podria ser un hecho
+
 listarCol([H|T],Pos,Lista):- 
 	nth0(Pos,H,Elemento),
     listarCol(T,Pos,ListaAux),
@@ -246,7 +246,7 @@ generateClue([H|T],N,Clue,Rest):-
 %Caso Base: 
 %se utiliza para finalizar la generación de pistas cuando no quedan más celdas por procesar.
 generateCluesList([],[]):- !. 
-	%%ListaPista = [],!.
+
 generateCluesList(Row,ClueList):- 
 	Row \==[], generateClue(Row,0,Clue,Rest),
 	generateCluesList(Rest,AuxList),
@@ -372,8 +372,8 @@ generatePosibility([],[]):-!.
 %Caso Recursivo:
 generatePosibility(Row,[ActualCLue|Rest]):- 
 	toSpace(Row,AuxRow),
-	addClue(AuxRow,RowWithClue,ActualCLue),
-    (Rest\=[], addSpace(RowWithClue,RowWithClueAndSpace);
+	addClue(AuxRow,RowWithClue,ActualCLue),  %agrega una secuencia de celdas marcadas
+    (Rest\=[], addSpace(RowWithClue,RowWithClueAndSpace); %si hay mas pistas, agrega un espacio
 	Rest==[], toSpace(RowWithClue,RowWithClueAndSpace)),
     generatePosibility(RowWithClueAndSpace,Rest).
 

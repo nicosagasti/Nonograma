@@ -47,19 +47,14 @@ function Game() {
 
         // Inicializar las completedRowsClues con ceros
         const initialCompletedRowsClues = Array(
-          response["RowClues"].length
-        ).fill(0);
+          response["RowClues"].length).fill(0);
         setCompletedRowsClues(initialCompletedRowsClues);
 
         // Inicializar las completedColumnsClues con ceros
         const initialCompletedColumnsClues = Array(
-          response["ColumClues"].length
-        ).fill(0);
+          response["ColumClues"].length).fill(0);
         setCompletedColumnsClues(initialCompletedColumnsClues);
-        const squaresS = JSON.stringify(response["Grid"]).replaceAll(
-          '"_"',
-          "_"
-        );
+        const squaresS = JSON.stringify(response["Grid"]).replaceAll('"_"', "_");
 
         const rowCluesS = JSON.stringify(response["RowClues"]);
         const colCluesS = JSON.stringify(response["ColumClues"]);
@@ -116,7 +111,7 @@ function Game() {
     let content = toggleChecked ? "#" : "X";
 
     if (showHintMode) {
-      if (grid[i][j] === "_") { //TODO Corroborar si es correcto el "_" (que pasa si el valor puesto en el bloque esta mal)
+      if (grid[i][j] === "_") { 
         content = solvedGrid[i][j]; //Dentro del metodo se actualiza la grilla con el valor de solvedGrid
       }
       setShowHintMode(false); // Desactivamos el modo de pistas
