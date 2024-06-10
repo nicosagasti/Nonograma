@@ -23,40 +23,70 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
 % checkCluesRecursivo(+listaPista, +listaGrilla, +Contador, +Retorno)
 %
 % Verifica si la lista de pistas se satisface
-checkCluesRecursivo([], [], 0, 1). % Primer Caso Base
-checkCluesRecursivo([P | _], [X |_ ], L, 0):- % Segundo Caso Base
+
+
+% Primer Caso Base:
+%Este caso se cumple cuando ambas listas están vacías, el resultado es 1.
+checkCluesRecursivo([], [], 0, 1). 
+
+%Segundo Caso Base:
+%Este caso se activa cuando hay una diferencia entre las pistas y la grilla, el resultado es 0.
+checkCluesRecursivo([P | _], [X |_ ], L, 0):- 
     X \== "#",
     L \== 0,
     L \== P.
 
-checkCluesRecursivo([], [X | _], L, 0):- % Tercer Caso Base => cuando hay marcados de mas
+%Tercer Caso Base: 
+%Este caso refleja cuando hay celdas marcadas con "#" de mas, si la lista de pistas está vacía, 
+%el primer elemento de la cuadrícula es "#", y L es 0. El resultado es 0.
+checkCluesRecursivo([], [X | _], L, 0):- 
     X == "#",
     L == 0.
-checkCluesRecursivo([P],[],L,1):- % Cuarto Caso Base => Cuando era el ultimo y L es P 
+
+%Cuarto Caso Base: 
+%Este caso se cumple cuando hay solo un elemento en la lista de pistas, y la lista de la grilla está vacía.
+checkCluesRecursivo([P],[],L,1):- 
     P == L.
 
-checkCluesRecursivo([P | _],[],L,0):- % Quinto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
+%Quinto Caso Base:
+%Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L != P
+checkCluesRecursivo([P | _],[],L,0):- 
     P \== L.
-checkCluesRecursivo([P | _],[],L,0):- % Sexto Caso Base => Cuando nos quedamos sin lista para consumir, pero seguimos teniendo Pistas, L == P
+
+%Sexto Caso Base:
+%Cuando nos quedamos sin lista para consumir, seguimos teniendo Pistas pero L == P
+checkCluesRecursivo([P | _],[],L,0):- 
     P == L.
 
 % Casos Recursivos:
+
+%Primer Caso Recursivo:
+%Si la lista de pistas está vacía y el primer elemento de la lista no es "#", 
+%se continúa con el resto de la lista.
 checkCluesRecursivo([],[X |Xs],0, Return):-
     X \== "#",
     checkCluesRecursivo([],Xs,0,Return).
 
+%Segundo Caso Recursivo:
+%Si el primer elemento de la lista no es "#", P no coincide con el contador, 
+%se continúa con el resto de las pistas y la lista reiniciando el contador.
 checkCluesRecursivo([P|Ps], [X | Xs], Count, Return) :-
     X \== "#", 
     P \== Count,
     checkCluesRecursivo([P|Ps], Xs, 0, Return).
 
-% Caso en el que X no es #
+%Tercer Caso Recursivo:
+%Si el primer elemento de la lista no es "#", P coincide con el contador, 
+%se continúa con el resto de las pistas y la lista reiniciando el contador.
 checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
     X \== "#", 
     P == Count,
     checkCluesRecursivo(Ps, Xs, 0, Return).
 
 % Caso en el que X es #
+%Cuarto Caso Recursivo:
+%Si el primer elemento de la lista es "#", 
+%se incrementa el contador y se continúa con el resto de las pistas y la lista.
 checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
     X == "#", 
     CountN is Count + 1,
@@ -67,7 +97,9 @@ checkCluesRecursivo([P | Ps], [X | Xs], Count, Return) :-
 %
 % checkClues(+ClueList, +GridList, -Satisfied)
 %
-% Metodo cascara: Verifica si la lista de pistas se satisface
+%Método cascara: Verifica si la lista de pistas se satisface
+%llama al predicado recursivo con la lista de pistas y una lista de la grilla, 
+%se inicia el contador en 0 y se devuelve el resultado en Satisfied
 checkClues(ClueList, GridList, Satisfied) :-
     checkCluesRecursivo(ClueList, GridList, 0, Satisfied).
 
@@ -192,26 +224,34 @@ listarCol([H|T],Pos,Lista):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%
-generateClue([],N,Pista,Resto):- 
-	Resto = [],Pista = [N].
-generateClue([H|T],N,Pista,Resto):- 
+%Caso base: 
+%se utiliza para finalizar la generación de la pista cuando no quedan más celdas por procesar.
+generateClue([],N,Clue,Rest):- 
+	Ret = [],Clue = [N].
+
+%Caso Recursivo: 
+%se utiliza para procesar cada celda de la lista, incrementando el contador cuando encuentra un "#" 
+%y finalizando la pista cuando encuentra cualquier otro símbolo.
+generateClue([H|T],N,Clue,Rest):- 
 	H == "#",
-	S is N+1, generateClue(T,S,Pista,Resto);
-    Resto = T,Pista = [N].
+	S is N+1, generateClue(T,S,Clue,Rest);
+    Rest = T, Clue = [N].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Genera una lista de pistas a traves de una fila de una matriz.
 %
 %generateCluesList(+Row, -CluesList).
+
+%Caso Base: 
+%se utiliza para finalizar la generación de pistas cuando no quedan más celdas por procesar.
 generateCluesList([],[]):- !. 
 	%%ListaPista = [],!.
-generateCluesList(Fila,ListaPista):- 
-	Fila \==[], generateClue(Fila,0,Pista,Resto),
-	generateCluesList(Resto,ListaAux),
-    Pista = [H], 
-	(H \== 0, addElement(H,ListaAux,ListaPista);ListaPista = ListaAux).
+generateCluesList(Row,ClueList):- 
+	Row \==[], generateClue(Row,0,Clue,Rest),
+	generateCluesList(Rest,AuxList),
+    Clue = [H], 
+	(H \== 0, addElement(H,AuxList,ClueList); ClueList= AuxList).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -229,121 +269,131 @@ addAtEnd(X,[H|T],R):-
 %Resuelve una grilla dada.
 %
 %solveGrid(+RowClues, +ColClues, +Grid, -SolvedGrid, +numRows, +numCols).
-solveGrid(PistasF,PistasC,Grilla,GrillaRes,CantF,CantC):-  
-    solveRows(PistasF,Grilla,GrillaAux,CantF),
-    transposed(GrillaAux,GrillaTraspuesta,CantC),
-    solveRows(PistasC,GrillaTraspuesta,GrillaAux2,CantC),
-    transposed(GrillaAux2,GrillaResAux2,CantF),
-    verifyRows(PistasF,GrillaResAux2,Sat,CantF),
-    (Sat = true,GrillaRes = GrillaResAux2;
-	solveGrid(PistasF,PistasC,GrillaResAux2,GrillaRes,CantF,CantC)).
+solveGrid(RClues,CCLues,Grid,ResGrid,CantR,CantC):-  
+    solveRows(RClues,Grid,AuxGrid,CantR),
+    transposed(AuxGrid,TransposedGrid,CantC),
+    solveRows(CCLues,TransposedGrid,AuxGrid2,CantC),
+    transposed(AuxGrid2,ResGridAux2,CantR),
+    verifyRows(RClues,ResGridAux2,Sat,CantR),
+    (Sat = true,ResGrid = ResGridAux2;
+	solveGrid(RClues,CCLues,ResGridAux2,ResGrid,CantR,CantC)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Verifica que cada fila de una grilla respeta las pistas dadas.
-%Idealmente recibe: Una lista de pistas, una grilla y la cantidad de filas.
-%Salida esperada: True en caso de que las filas verifiquen las pistas, false en caso contrario.
+%
 %verifyRows(+CluesList, +Grid, +numRows, -Return ).
 verifyRows([],[],Sat,-1):- 
 	Sat = true,!.
-verifyRows([P|RestoP],[F|RestoF],Sat,N):- 
+verifyRows([P|RestP],[F|RestF],Sat,N):- 
 	S is N-1, 
-	generateCluesList(F,Pista),
-	P = Pista, 
-	verifyRows(RestoP,RestoF,Sat,S); 
+	generateCluesList(F,Clue),
+	P = Clue, 
+	verifyRows(RestP,RestF,Sat,S); 
 	Sat = false.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                               
 %Genera la mejor respuesta posible de una grilla.
-%Idealmente recibe: Pistas de filas, una grilla y la cantidad de filas.
-%Salida esperada: Una grilla con la mayor cantidad de pistas resueltas en una iteracion.
+%
 %solveRows(+CluesList, +Grid, -ResGrid, +numRows/Cols).
-solveRows(_PistasF,Grilla,GrillaRes,-1):-
-	GrillaRes = Grilla,!.
-solveRows(PistasF,Grilla,GrillaRes,Pos):-
-	nth0(Pos,PistasF,Pista),
-	nth0(Pos,Grilla,Fila),
-    generatePosibilitiesList(Fila,Pista,ListaPosibilidades),
-	longitud(Fila,Long),
-    solveLine(ListaPosibilidades,LineaModificada,Long),
-    replace(_Fila,Pos,LineaModificada,Grilla,GrillaModificada),
+
+%Caso Base
+solveRows(_RClues,Grid,ResGrid,-1):-
+	ResGrid = Grid,!.
+
+%Caso Recursivo:
+%obtiene la pista y la fila actual, genera las posibles combinaciones válidas, resuelve la fila, 
+%reemplaza la fila en la grilla.
+solveRows(RClues,Grid,ResGrid,Pos):-
+	nth0(Pos,RClues,Clue),
+	nth0(Pos,Grid,Row),
+    generatePosibilitiesList(Row,Clue,PosibilitiesList),
+	longitud(Row,Long),
+    solveLine(PosibilitiesList,ModifiedList,Long),
+    replace(_Row,Pos,ModifiedList,Grid,ModifiedGrid),
     S is Pos-1,
-	solveRows(PistasF,GrillaModificada,GrillaRes,S).
+	solveRows(RClues,ModifiedGrid,ResGrid,S).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Genera la grilla traspuesta de una grilla dada.
-%Idealmente recibe: Una grilla y la cantidad de filas.
-%Salida esperada: La grilla traspuesta a la dada.
+%
 %transposed(+Grid, -transposedGrid, +numRows).
-transposed(_Matriz,MatrizTraspuesta,-1):-
-	MatrizTraspuesta = [],!.
-transposed(Matriz,MatrizTraspuesta,Pos):-
-	listarCol(Matriz,Pos,Col),
+transposed(_Grid,TransposedGrid,-1):-
+	TransposedGrid = [],!.
+transposed(Grid,TransposedGrid,Pos):-
+	listarCol(Grid,Pos,Col),
 	S is Pos-1,
-	transposed(Matriz,MatrizAux,S), 
-	addAtEnd(Col,MatrizAux,MatrizTraspuesta).
+	transposed(Grid,AuxGrid,S), 
+	addAtEnd(Col,AuxGrid,TransposedGrid).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%Resuelve una linea dada de la forma mas completa posible.
-%Idealmente recibe: Una lista de posibles combinaciones validas y la longitud de la linea.
-%Salida esperada: Una linea con la mayor cantidad de casilleros resueltos.
+%resuelve una línea dada una lista de posibles combinaciones válidas para esa línea.
+%
 %solveLine(+PosibilitiesList, -solvedLine, +lineLength)
-solveLine(_ListaPosibilidades,LineaResuelta,-1):- 
-	LineaResuelta = [],!.
-solveLine(ListaPosibilidades,LineaResuelta,Long):-
-	S is Long -1,
-	solveLine(ListaPosibilidades,LineaAux,S),
-	(forall(member(Posibilidad,ListaPosibilidades),
-	nth0(Long,Posibilidad,"#")),
-    append(LineaAux,["#"],LineaResuelta);
-    forall(member(Posibilidad,ListaPosibilidades),
-	nth0(Long,Posibilidad,"X")),
-    append(LineaAux,["X"],LineaResuelta);
-    append(LineaAux,[_],LineaResuelta)).
+
+%Caso Base
+solveLine(_PosibilitiesList,SolvedLine,-1):- 
+	SolvedLine = [],!.
+
+%Caso Recursivo: 
+solveLine(PosibilitiesList,SolvedLine,Length):-
+	S is Length -1,
+	solveLine(PosibilitiesList,AuxLine,S),
+	(forall(member(Posibility,PosibilitiesList),
+	nth0(Length,Posibility,"#")),
+    append(AuxLine,["#"],SolvedLine);   %Si todas las combinaciones en PosibilitiesList tienen "#", agrega "#"
+    forall(member(Posibility,PosibilitiesList),
+	nth0(Length,Posibility,"X")),
+    append(AuxLine,["X"],SolvedLine);   %Si todas las combinaciones en PosibilitiesList tienen "X", agrega "X"
+    append(AuxLine,[_],SolvedLine)).   %Si no se puede determinar, agrega "_"
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Genera una lista con las posibilidades validas de una Fila.
-%Idealmente recibe: Una fila y su pista asociada.
-%Salida esperada: Una lista con las diferentes posibilidades validas de la fila.
+%utiliza findall/3 para encontrar todas las configuraciones de Row que son generadas por generatePosibility/3 
+%y las almacena en PosibilitiesList.
 %generatePosibilitiesList(+Row, +rowClue, -posibilitiesList)
-generatePosibilitiesList(Fila,Pista,ListaPosibilidades):-
-	findall(Fila,generatePosibility(Fila,Pista),ListaPosibilidades).
+generatePosibilitiesList(Row,Clue,PosibilitiesList):-
+	findall(Row,generatePosibility(Row,Clue),PosibilitiesList).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%Genera las posibles combinaciones de una fila.
-%Idealmente recibe: Una fila y una pista.
-%Salida esperada: Distintas combinaciones validas de la fila dada.
-%generatePosibility(+Row, +rowClue, -Return)
+%Genera las posibles combinaciones de una fila de acuerdo a una pista.
+%
+%generatePosibility(+Row, +rowClue, -Ret)
+
+%Caso Base: 
+%Se activa cuando ambas listas están vacías (se alcanzó el final)
 generatePosibility([],[]):-!.
-generatePosibility(Fila,[PistaActual|Resto]):- 
-	espaciar(Fila,FilaAux),
-	addClue(FilaAux,FilaConPista,PistaActual),
-    (Resto\=[], agregarEspacio(FilaConPista,FilaConPistayEspacio);
-	Resto==[], espaciar(FilaConPista,FilaConPistayEspacio)),
-    generatePosibility(FilaConPistayEspacio,Resto).
+
+%Caso Recursivo:
+generatePosibility(Row,[ActualCLue|Rest]):- 
+	toSpace(Row,AuxRow),
+	addClue(AuxRow,RowWithClue,ActualCLue),
+    (Rest\=[], addSpace(RowWithClue,RowWithClueAndSpace);
+	Rest==[], toSpace(RowWithClue,RowWithClueAndSpace)),
+    generatePosibility(RowWithClueAndSpace,Rest).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Los siguientes tres predicados se encargan de generar distintas combinaciones dentro de la fila dada.
 %Agrega a la fila un secuencia de '#' correspondientes a la pista.
-addClue(Linea,Linea, 0).
-addClue(["#"|Linea], RestoLinea, N):-
+addClue(Line,Line, 0).
+addClue(["#"|Line], LineRest, N):-
 	N > 0,
 	S is N - 1,
-    addClue(Linea, RestoLinea, S).
+    addClue(Line, LineRest, S).
 
 %Genera espacios dentro la fila.
-espaciar(Linea, Linea).
-espaciar(["X"|Linea],RestoLinea) :- 
-	espaciar(Linea, RestoLinea).
+toSpace(Line, Line).
+toSpace(["X"|Line],LineRest) :- 
+	toSpace(Line, RLineRest).
 
 %Agrega un espacio individual dentro de la fila luego de haber agregado una pista.
-agregarEspacio(["X"|T],T).
+addSpace(["X"|T],T).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -358,7 +408,7 @@ longitud([_H|T],R):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Predicado para inicializar pistas: %
+% Predicado para inicializar pistas: 
 % Predicado principal
 %
 %compareGrid(+Grid, +SolvedGrid, -RowsClues, -ColumnsClues, +CantCol)
